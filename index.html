@@ -14,12 +14,17 @@
     <p class="subjudul">Pantau uangmu selama sebulan</p>
 
     <!-- Saldo Awal -->
-    <div class="card">
-        <h3>💰 Saldo Awal Bulan</h3>
+    <!-- Kelola Saldo -->
+<div class="card">
+    <h3>💰 Kelola Saldo</h3>
 
-        <input type="text" id="saldoAwal" placeholder="Masukkan saldo awal" oninput="formatAngka(this)">
-        <button onclick="simpanSaldo()">Simpan Saldo</button>
-    </div>
+    <input type="text" id="saldoAwal" placeholder="Masukkan nominal" oninput="formatAngka(this)">
+
+    <div class="btn-group">
+    <button onclick="simpanSaldo()">Set Saldo</button>
+    <button onclick="tambahSaldo()">Tambah Saldo</button>
+</div>
+</div>
 
     <!-- Tambah Pengeluaran -->
     <div class="card">

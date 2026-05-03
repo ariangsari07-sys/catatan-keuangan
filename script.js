@@ -39,6 +39,19 @@ function simpanSaldo(){
     tampilData();
 }
 
+function tambahSaldo(){
+
+    let isiInput = document.getElementById("saldoAwal").value;
+
+    let tambah = ambilAngka(isiInput);
+
+    saldoAwal = saldoAwal + tambah;
+
+    document.getElementById("saldoAwal").value = "";
+
+    tampilData();
+}
+
 // TAMBAH DATA
 function tambahData(){
 
