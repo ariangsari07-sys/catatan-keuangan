@@ -6,7 +6,7 @@ const db = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "catatan_uang"
+    database: "catatan_keuangan"
 });
 
 db.connect(function(err){
@@ -27,7 +27,7 @@ app.post("/tambah", function(req,res){
     let nama = req.body.nama;
     let jumlah = req.body.jumlah;
 
-    let sql = "INSERT INTO pengeluaran (tanggal,nama,jumlah) VALUES (?,?,?)";
+    let sql = "INSERT INTO riwayat (tanggal,nama,jumlah) VALUES (?,?,?)";
 
     db.query(sql,[tanggal,nama,jumlah], function(err,result){
 
@@ -59,7 +59,7 @@ app.get("/data", function(req,res){
 
 app.get("/data", function(req,res){
 
-    let sql = "SELECT * FROM pengeluaran ORDER BY id DESC";
+    let sql = "SELECT * FROM riwayat ORDER BY id DESC";
 
     db.query(sql, function(err,result){
 
