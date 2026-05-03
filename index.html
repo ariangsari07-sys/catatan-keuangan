@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catatan Pengeluaran</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📒 Catatan Pengeluaran</h1>
+    <p class="subjudul">Pantau uangmu selama sebulan</p>
+
+    <!-- Saldo Awal -->
+    <div class="card">
+        <h3>💰 Saldo Awal Bulan</h3>
+
+        <input type="text" id="saldoAwal" placeholder="Masukkan saldo awal" oninput="formatAngka(this)">
+        <button onclick="simpanSaldo()">Simpan Saldo</button>
+    </div>
+
+    <!-- Tambah Pengeluaran -->
+    <div class="card">
+        <h3>🛒 Tambah Pengeluaran</h3>
+
+        <input type="date" id="tanggal">
+
+        <input type="text" id="nama" placeholder="Contoh: Makan">
+
+        <input type="text" id="jumlah" placeholder="Jumlah uang" oninput="formatAngka(this)">
+
+        <button onclick="tambahData()">Tambah</button>
+    </div>
+
+    <!-- Ringkasan -->
+    <div class="card">
+        <h3>📊 Ringkasan</h3>
+
+        <p>Saldo Awal: <span id="tampilSaldo">Rp 0</span></p>
+        <p>Total Keluar: <span id="totalKeluar">Rp 0</span></p>
+        <p>Sisa Saldo: <span id="sisaSaldo">Rp 0</span></p>
+    </div>
+
+    <!-- Riwayat -->
+    <div class="card">
+        <h3>📋 Riwayat Pengeluaran</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Nama</th>
+                    <th>Jumlah</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody id="isiData">
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
