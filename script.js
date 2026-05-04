@@ -142,7 +142,7 @@ function simpanSaldo(){
     let totalMasuk = 0;
     let totalKeluar = 0;
 
-    for(let i=0; i<dataPengeluaran.length; i++){
+    for(let i = dataPengeluaran.length - 1; i >= 0; i--){
 
         let item = dataPengeluaran[i];
 
