@@ -1,10 +1,9 @@
-let saldoAwal = 0;
 let dataPengeluaran = [];
 let editIndex = -1;
+let editId = null;
 
-// FORMAT ANGKA OTOMATIS
+// FORMAT ANGKA
 function formatAngka(input){
-
     let angka = input.value.replace(/[^0-9]/g,'');
 
     if(angka == ""){
@@ -15,44 +14,61 @@ function formatAngka(input){
     input.value = "Rp." + Number(angka).toLocaleString("id-ID");
 }
 
-// AMBIL ANGKA ASLI
+// AMBIL ANGKA
 function ambilAngka(teks){
     return Number(teks.replace(/[^0-9]/g,''));
 }
 
 // FORMAT RUPIAH
 function rupiah(angka){
-    return angka.toLocaleString("id-ID");
+    return Number(angka).toLocaleString("id-ID");
 }
 
-// SIMPAN SALDO
-function simpanSaldo(){
+// FORMAT TANGGAL + HARI
+function formatTanggal(tanggal){
+    let t = new Date(tanggal);
 
-    let isiInput = document.getElementById("saldoAwal").value;
-
-    saldoAwal = ambilAngka(isiInput);
-
-    if(isNaN(saldoAwal)){
-        saldoAwal = 0;
-    }
-
-    tampilData();
+    return t.toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    });
 }
 
+// TAMBAH SALDO
 function tambahSaldo(){
 
     let isiInput = document.getElementById("saldoAwal").value;
-
     let tambah = ambilAngka(isiInput);
 
-    saldoAwal = saldoAwal + tambah;
+    if(tambah <= 0){
+        alert("Masukkan nominal yang benar!");
+        return;
+    }
 
-    document.getElementById("saldoAwal").value = "";
+    let tanggal = new Date().toISOString();
 
-    tampilData();
+    fetch("http://localhost:3000/tambah",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            tanggal: tanggal,
+            nama: "Tambah Saldo",
+            jumlah: tambah
+        })
+    })
+    .then(res => res.text())
+    .then(data => {
+        alert(data);
+        document.getElementById("saldoAwal").value = "";
+        ambilData();
+    });
 }
 
-// TAMBAH DATA
+// TAMBAH PENGELUARAN
 function tambahData(){
 
     let tanggal = document.getElementById("tanggal").value;
@@ -66,37 +82,124 @@ function tambahData(){
 
     let angkaJumlah = ambilAngka(jumlah);
 
-    fetch("/tambah",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            tanggal: tanggal,
-            nama: nama,
-            jumlah: angkaJumlah
+    // MODE EDIT
+    if(editId !== null){
+
+        fetch(`http://localhost:3000/edit/${editId}`,{
+            method:"PUT",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                tanggal: tanggal,
+                nama: nama,
+                jumlah: angkaJumlah
+            })
         })
-    })
-    .then(response => response.text())
-    .then(data => {
-
-        alert(data);
-
-        // tambahkan ke array lokal
-        dataPengeluaran.push({
-            tanggal: tanggal,
-            nama: nama,
-            jumlah: angkaJumlah
+        .then(res => res.text())
+        .then(data => {
+            alert(data);
+            editId = null;
+            ambilData();
         });
 
-        tampilData();
+    } 
+    // MODE TAMBAH
+    else {
 
-        document.getElementById("tanggal").value = "";
-        document.getElementById("nama").value = "";
-        document.getElementById("jumlah").value = "";
+        fetch("http://localhost:3000/tambah",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                tanggal: tanggal,
+                nama: nama,
+                jumlah: angkaJumlah
+            })
+        })
+        .then(res => res.text())
+        .then(data => {
+            alert(data);
+            ambilData();
+        });
+    }
 
+    document.getElementById("tanggal").value = "";
+    document.getElementById("nama").value = "";
+    document.getElementById("jumlah").value = "";
+
+    console.log("EDIT ID:", editId);
+}
+
+// RESET SALDO (TIDAK HAPUS DATA)
+function simpanSaldo(){
+
+    let konfirmasi = confirm("Simpan sisa saldo ke tabungan & reset?");
+    if(!konfirmasi) return;
+
+    // HITUNG SISA DARI DATA SEKARANG
+    let totalMasuk = 0;
+    let totalKeluar = 0;
+
+    for(let i=0; i<dataPengeluaran.length; i++){
+
+        let item = dataPengeluaran[i];
+
+        if(item.nama === "Reset Saldo"){
+            totalMasuk = 0;
+            totalKeluar = 0;
+        }
+        else if(item.nama === "Tambah Saldo"){
+            totalMasuk += Number(item.jumlah);
+        }
+        else if(item.nama !== "Tabungan"){
+            totalKeluar += Number(item.jumlah);
+        }
+    }
+
+    let sisa = totalMasuk - totalKeluar;
+
+    let tanggal = new Date().toISOString();
+
+    // SIMPAN KE TABUNGAN
+    fetch("http://localhost:3000/tambah",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            tanggal: tanggal,
+            nama: "Tabungan",
+            jumlah: sisa
+        })
+    })
+    .then(() => {
+
+        // RESET BULAN
+        return fetch("http://localhost:3000/tambah",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({
+                tanggal: tanggal,
+                nama: "Reset Saldo",
+                jumlah: 0
+            })
+        });
+
+    })
+    .then(() => {
+        alert("Saldo dipindahkan ke tabungan & berhasil reset");
+        ambilData();
     });
+}
 
+// AMBIL DATA
+function ambilData(){
+    fetch("http://localhost:3000/data")
+    .then(res => res.json())
+    .then(data => {
+        dataPengeluaran = data;
+        tampilData();
+    });
 }
 
 // TAMPIL DATA
@@ -105,45 +208,77 @@ function tampilData(){
     let isi = document.getElementById("isiData");
     isi.innerHTML = "";
 
-    let total = 0;
+    let totalMasuk = 0;
+    let totalKeluar = 0;
+    let totalTabungan = 0;
 
-    for(let i=0; i<dataPengeluaran.length; i++){
+    for(let i=dataPengeluaran.length - 1; i >= 0; i--){
 
-        total += dataPengeluaran[i].jumlah;
+        let item = dataPengeluaran[i];
+
+        // RESET BULAN
+        if(item.nama === "Tabungan"){
+            totalTabungan += Number(item.jumlah);
+        }
+
+        else if(item.nama === "Reset Saldo"){
+            totalMasuk = 0;
+            totalKeluar = 0;
+        }
+
+        else if(item.nama === "Tambah Saldo"){
+            totalMasuk += Number(item.jumlah);
+        } 
+        
+        else {
+            totalKeluar += Number(item.jumlah);
+        }
 
         isi.innerHTML += `
         <tr>
-            <td>${dataPengeluaran[i].tanggal}</td>
-            <td>${dataPengeluaran[i].nama}</td>
-            <td>Rp ${rupiah(dataPengeluaran[i].jumlah)}</td>
+            <td>${formatTanggal(item.tanggal)}</td>
+            <td>${item.nama}</td>
+            <td>Rp ${rupiah(item.jumlah)}</td>
             <td>
-                <button class="edit" onclick="editData(${i})">Edit</button>
-                <button class="hapus" onclick="hapusData(${i})">Hapus</button>
+                <button class="btn-edit" onclick="editData(${item.id})">Edit</button>
+                <button class="btn-hapus" onclick="hapusData(${item.id})">Hapus</button>
             </td>
         </tr>
         `;
     }
 
-    document.getElementById("tampilSaldo").innerText = "Rp " + rupiah(saldoAwal);
-    document.getElementById("totalKeluar").innerText = "Rp " + rupiah(total);
-    document.getElementById("sisaSaldo").innerText = "Rp " + rupiah(saldoAwal - total);
+    document.getElementById("tampilSaldo").innerText = "Rp " + rupiah(totalMasuk);
+    document.getElementById("totalKeluar").innerText = "Rp " + rupiah(totalKeluar);
+    document.getElementById("sisaSaldo").innerText = "Rp " + rupiah(totalMasuk - totalKeluar);
+    document.getElementById("tabungan").innerText = "Rp " + rupiah(totalTabungan);
 }
 
-tampilData();
-// HAPUS
-function hapusData(index){
-    dataPengeluaran.splice(index,1);
-    tampilData();
+ambilData();
+
+//HAPUS DATA
+function hapusData(id){
+
+    let konfirmasi = confirm("Yakin mau hapus data ini?");
+    if(!konfirmasi) return;
+
+    fetch(`http://localhost:3000/hapus/${id}`,{
+        method:"DELETE"
+    })
+    .then(res => res.text())
+    .then(data => {
+        alert(data);
+        ambilData();
+    });
 }
 
-// EDIT
-function editData(index){
+//EDIT DATA
+function editData(id){
 
-    document.getElementById("tanggal").value = dataPengeluaran[index].tanggal;
-    document.getElementById("nama").value = dataPengeluaran[index].nama;
-    document.getElementById("jumlah").value = dataPengeluaran[index].jumlah.toLocaleString("id-ID");
+    let item = dataPengeluaran.find(d => d.id == id);
 
-    editIndex = index;
+    document.getElementById("tanggal").value = item.tanggal.split("T")[0];
+    document.getElementById("nama").value = item.nama;
+    document.getElementById("jumlah").value = item.jumlah;
+
+    editId = id;
 }
-
-tampilData();

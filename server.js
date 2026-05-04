@@ -1,5 +1,5 @@
 const express = require("express");
-const mysql = require ("mysql2");
+const mysql = require("mysql2");
 const app = express();
 
 const db = mysql.createConnection({
@@ -18,74 +18,79 @@ db.connect(function(err){
 });
 
 app.use(express.static(__dirname));
-
 app.use(express.json());
 
+// TAMBAH DATA
 app.post("/tambah", function(req,res){
 
-    let tanggal = req.body.tanggal;
-    let nama = req.body.nama;
-    let jumlah = req.body.jumlah;
+    let { tanggal, nama, jumlah } = req.body;
 
     let sql = "INSERT INTO riwayat (tanggal,nama,jumlah) VALUES (?,?,?)";
 
-    db.query(sql,[tanggal,nama,jumlah], function(err,result){
-
+    db.query(sql,[tanggal,nama,jumlah], function(err){
         if(err){
+            console.log(err);
             res.send("Gagal tambah data");
         }else{
             res.send("Berhasil tambah data");
         }
-
     });
 
 });
 
-app.get("/data", function(req,res){
-
-    let sql = "SELECT * FROM pengeluaran ORDER BY id DESC";
-
-    db.query(sql, function(err,result){
-
-        if(err){
-            res.send([]);
-        }else{
-            res.json(result);
-        }
-
-    });
-
-});
-
+// AMBIL DATA
 app.get("/data", function(req,res){
 
     let sql = "SELECT * FROM riwayat ORDER BY id DESC";
 
     db.query(sql, function(err,result){
-
         if(err){
-            res.send([]);
+            console.log(err);
+            res.json([]);
         }else{
             res.json(result);
         }
-
     });
 
 });
+
 app.listen(3000, function(){
     console.log("Server berjalan di http://localhost:3000");
 });
 
-function ambilData(){
+// HAPUS DATA
+app.delete("/hapus/:id", function(req,res){
 
-    fetch("/data")
-    .then(response => response.json())
-    .then(data => {
+    let id = req.params.id;
 
-        dataPengeluaran = data;
+    let sql = "DELETE FROM riwayat WHERE id = ?";
 
-        tampilData();
-
+    db.query(sql,[id], function(err){
+        if(err){
+            console.log(err);
+            res.send("Gagal hapus");
+        }else{
+            res.send("Berhasil hapus");
+        }
     });
 
-}
+});
+
+// EDIT DATA
+app.put("/edit/:id", function(req,res){
+
+    let id = req.params.id;
+    let { tanggal, nama, jumlah } = req.body;
+
+    let sql = "UPDATE riwayat SET tanggal=?, nama=?, jumlah=? WHERE id=?";
+
+    db.query(sql,[tanggal,nama,jumlah,id], function(err){
+        if(err){
+            console.log(err);
+            res.send("Gagal edit");
+        }else{
+            res.send("Berhasil edit");
+        }
+    });
+
+});

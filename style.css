@@ -122,3 +122,30 @@ tr:hover{
 .btn-group button{
     flex: 1;
 }
+
+.btn-edit{
+    background-color: #facc15; 
+    color: black;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-hapus{
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 6px; 
+}
+
+.btn-edit:hover{
+    background-color: #eab308;
+}
+
+.btn-hapus:hover{
+    background-color: #dc2626;
+}
