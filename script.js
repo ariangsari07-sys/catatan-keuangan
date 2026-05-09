@@ -193,13 +193,18 @@ function simpanSaldo(){
 }
 
 // AMBIL DATA
+// AMBIL DATA
 function ambilData(){
-    fetch("http://localhost:3000/data")
+
+    fetch("/data")
     .then(res => res.json())
     .then(data => {
+
         dataPengeluaran = data;
         tampilData();
+
     });
+
 }
 
 // TAMPIL DATA
@@ -282,3 +287,4 @@ function editData(id){
 
     editId = id;
 }
+
