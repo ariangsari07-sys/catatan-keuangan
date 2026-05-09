@@ -49,7 +49,7 @@ function tambahSaldo(){
 
     let tanggal = new Date().toISOString();
 
-    fetch("http://localhost:3000/tambah",{
+    fetch("/tambah",{
         method:"POST",
         headers:{
             "Content-Type":"application/json"
@@ -85,7 +85,7 @@ function tambahData(){
     // MODE EDIT
     if(editId !== null){
 
-        fetch(`http://localhost:3000/edit/${editId}`,{
+        fetch(`/edit/${editId}`,{
             method:"PUT",
             headers:{
                 "Content-Type":"application/json"
@@ -107,7 +107,7 @@ function tambahData(){
     // MODE TAMBAH
     else {
 
-        fetch("http://localhost:3000/tambah",{
+        fetch("/tambah",{
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
@@ -163,7 +163,7 @@ function simpanSaldo(){
     let tanggal = new Date().toISOString();
 
     // SIMPAN KE TABUNGAN
-    fetch("http://localhost:3000/tambah",{
+    fetch("/tambah",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
@@ -175,7 +175,7 @@ function simpanSaldo(){
     .then(() => {
 
         // RESET BULAN
-        return fetch("http://localhost:3000/tambah",{
+        return fetch("/tambah",{
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body: JSON.stringify({
@@ -192,7 +192,6 @@ function simpanSaldo(){
     });
 }
 
-// AMBIL DATA
 // AMBIL DATA
 function ambilData(){
 
@@ -266,7 +265,7 @@ function hapusData(id){
     let konfirmasi = confirm("Yakin mau hapus data ini?");
     if(!konfirmasi) return;
 
-    fetch(`http://localhost:3000/hapus/${id}`,{
+    fetch(`/hapus/${id}`,{
         method:"DELETE"
     })
     .then(res => res.text())
