@@ -153,12 +153,16 @@ tr:hover{
 .ringkasan-wrapper{
     display:flex;
     gap:20px;
-    align-items:stretch;
+    align-items:flex-start;
 }
 
 .ringkasan-card,
 .tabungan-card{
-    flex:1;
+    width:50%;
+}
+
+.ringkasan-card{
+    min-height: 200px;
 }
 
 .btn-tabungan{
@@ -179,21 +183,3 @@ tr:hover{
 
 }
 
-.ringkasan-card p{
-    font-size:18px;
-    margin:18px 0;
-    font-weight:500;
-}
-
-.ringkasan-card span{
-    font-size:24px;
-    font-weight:bold;
-    color: black;
-}
-
-.tabungan-card h2{
-    font-size:32px;
-    color: rgb(58, 55, 55);
-    margin-top:10px;
-    margin-bottom:20px;
-}
