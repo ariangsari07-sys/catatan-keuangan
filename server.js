@@ -1,375 +1,303 @@
-let dataPengeluaran = [];
-let editIndex = -1;
-let editId = null;
+const express = require("express");
+const mysql = require("mysql2");
+const { Pool } = require("pg");
 
-// FORMAT ANGKA
-function formatAngka(input){
+const app = express();
 
-    let angka = input.value.replace(/[^0-9]/g,'');
+let db;
+let mode = "";
 
-    if(angka == ""){
-        input.value = "";
-        return;
-    }
+// ======================
+// KONEKSI DATABASE
+// ======================
 
-    input.value = "Rp." + Number(angka).toLocaleString("id-ID");
+if(process.env.DATABASE_URL){
 
-}
-
-// AMBIL ANGKA
-function ambilAngka(teks){
-
-    return Number(teks.replace(/[^0-9]/g,''));
-
-}
-
-// FORMAT RUPIAH
-function rupiah(angka){
-
-    return Number(angka).toLocaleString("id-ID");
-
-}
-
-// FORMAT TANGGAL + HARI
-function formatTanggal(tanggal){
-
-    let t = new Date(tanggal);
-
-    return t.toLocaleDateString("id-ID", {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
+    // POSTGRESQL (RAILWAY)
+    db = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+            rejectUnauthorized: false
+        }
     });
 
-}
+    mode = "postgres";
 
-// TAMBAH SALDO
+    console.log("Mode ONLINE PostgreSQL");
 
-function tambahSaldo(){
+}else{
 
-    let isiInput = document.getElementById("saldoAwal").value;
-    let tambah = ambilAngka(isiInput);
+    // MYSQL (LOCALHOST)
+    db = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "",
+        database: "catatan_keuangan"
+    });
 
-    if(tambah <= 0){
+    db.connect(function(err){
 
-        alert("Masukkan nominal yang benar!");
-        return;
-
-    }
-
-    // TANPA JAM
-    let tanggal = new Date().toISOString().split("T")[0];
-
-    fetch("/tambah",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            tanggal: tanggal,
-            nama: "Tambah Saldo",
-            jumlah: tambah
-        })
-    })
-    .then(res => res.text())
-    .then(data => {
-
-        alert(data);
-
-        document.getElementById("saldoAwal").value = "";
-
-        ambilData();
+        if(err){
+            console.log("Koneksi MySQL gagal");
+        }else{
+            console.log("MySQL localhost tersambung");
+        }
 
     });
 
+    mode = "mysql";
+
 }
 
+app.use(express.static(__dirname));
+app.use(express.json());
+
+// ======================
 // TAMBAH DATA
+// ======================
 
-function tambahData(){
+app.post("/tambah", async (req,res)=>{
 
-    let tanggal = document.getElementById("tanggal").value;
-    let nama = document.getElementById("nama").value;
-    let jumlah = document.getElementById("jumlah").value;
+    let { tanggal, nama, jumlah } = req.body;
 
-    if(tanggal == "" || nama == "" || jumlah == ""){
+    // POSTGRESQL
+    if(mode == "postgres"){
 
-        alert("Isi semua data!");
-        return;
+        try{
 
-    }
+            await db.query(
+                "INSERT INTO riwayat (tanggal,nama,jumlah) VALUES ($1,$2,$3)",
+                [tanggal,nama,jumlah]
+            );
 
-    let angkaJumlah = ambilAngka(jumlah);
+            res.send("Berhasil tambah data");
 
-    // MODE EDIT
-    if(editId !== null){
+        }catch(err){
 
-        fetch(`/edit/${editId}`,{
-            method:"PUT",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                tanggal: tanggal,
-                nama: nama,
-                jumlah: angkaJumlah
-            })
-        })
-        .then(res => res.text())
-        .then(data => {
+            console.log(err);
+            res.send("Gagal tambah data");
 
-            alert(data);
-
-            editId = null;
-
-            ambilData();
-
-        });
+        }
 
     }
 
-    // MODE TAMBAH
+    // MYSQL
     else{
 
-        fetch("/tambah",{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                tanggal: tanggal,
-                nama: nama,
-                jumlah: angkaJumlah
-            })
-        })
-        .then(res => res.text())
-        .then(data => {
+        let sql = "INSERT INTO riwayat (tanggal,nama,jumlah) VALUES (?,?,?)";
 
-            alert(data);
+        db.query(sql,[tanggal,nama,jumlah], function(err){
 
-            ambilData();
+            if(err){
+                console.log(err);
+                res.send("Gagal tambah data");
+            }else{
+                res.send("Berhasil tambah data");
+            }
 
         });
 
     }
 
-    document.getElementById("tanggal").value = "";
-    document.getElementById("nama").value = "";
-    document.getElementById("jumlah").value = "";
+});
 
-}
-
-// RESET SALDO
-
-function simpanSaldo(){
-
-    let konfirmasi = confirm("Simpan sisa saldo ke tabungan & reset?");
-
-    if(!konfirmasi) return;
-
-    let totalMasuk = 0;
-    let totalKeluar = 0;
-
-    for(let i = dataPengeluaran.length - 1; i >= 0; i--){
-
-        let item = dataPengeluaran[i];
-
-        if(item.nama === "Reset Saldo"){
-
-            totalMasuk = 0;
-            totalKeluar = 0;
-
-        }
-
-        else if(item.nama === "Tambah Saldo"){
-
-            totalMasuk += Number(item.jumlah);
-
-        }
-
-        else if(item.nama !== "Tabungan"){
-
-            totalKeluar += Number(item.jumlah);
-
-        }
-
-    }
-
-    let sisa = totalMasuk - totalKeluar;
-
-    // TANPA JAM
-    let tanggal = new Date().toISOString().split("T")[0];
-
-    // SIMPAN TABUNGAN
-    fetch("/tambah",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            tanggal: tanggal,
-            nama: "Tabungan",
-            jumlah: sisa
-        })
-    })
-
-    .then(() => {
-
-        // RESET BULAN
-        return fetch("/tambah",{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                tanggal: tanggal,
-                nama: "Reset Saldo",
-                jumlah: 0
-            })
-        });
-
-    })
-
-    .then(() => {
-
-        alert("Saldo dipindahkan ke tabungan & berhasil reset");
-
-        ambilData();
-
-    });
-
-}
-
+// ======================
 // AMBIL DATA
+// ======================
 
-function ambilData(){
+app.get("/data", async (req,res)=>{
 
-    fetch("/data")
-    .then(res => res.json())
-    .then(data => {
+    // POSTGRESQL
+    if(mode == "postgres"){
 
-        dataPengeluaran = data;
+        try{
 
-        tampilData();
+            let result = await db.query(
+                "SELECT * FROM riwayat ORDER BY id DESC"
+            );
 
-    });
+            res.json(result.rows);
 
-}
+        }catch(err){
 
-// TAMPIL DATA
-
-function tampilData(){
-
-    let isi = document.getElementById("isiData");
-
-    isi.innerHTML = "";
-
-    let totalMasuk = 0;
-    let totalKeluar = 0;
-    let totalTabungan = 0;
-
-    for(let i = dataPengeluaran.length - 1; i >= 0; i--){
-
-        let item = dataPengeluaran[i];
-
-        // TABUNGAN
-        if(item.nama === "Tabungan"){
-
-            totalTabungan += Number(item.jumlah);
+            console.log(err);
+            res.json([]);
 
         }
-
-        // RESET
-        else if(item.nama === "Reset Saldo"){
-
-            totalMasuk = 0;
-            totalKeluar = 0;
-
-        }
-
-        // TAMBAH SALDO
-        else if(item.nama === "Tambah Saldo"){
-
-            totalMasuk += Number(item.jumlah);
-
-        }
-
-        // PENGELUARAN
-        else{
-
-            totalKeluar += Number(item.jumlah);
-
-        }
-
-        isi.innerHTML += `
-        <tr>
-            <td>${formatTanggal(item.tanggal)}</td>
-            <td>${item.nama}</td>
-            <td>Rp ${rupiah(item.jumlah)}</td>
-            <td>
-                <button class="btn-edit" onclick="editData(${item.id})">Edit</button>
-
-                <button class="btn-hapus" onclick="hapusData(${item.id})">Hapus</button>
-            </td>
-        </tr>
-        `;
 
     }
 
-    document.getElementById("tampilSaldo").innerText =
-    "Rp " + rupiah(totalMasuk);
+    // MYSQL
+    else{
 
-    document.getElementById("totalKeluar").innerText =
-    "Rp " + rupiah(totalKeluar);
+        let sql = "SELECT * FROM riwayat ORDER BY id DESC";
 
-    document.getElementById("sisaSaldo").innerText =
-    "Rp " + rupiah(totalMasuk - totalKeluar);
+        db.query(sql, function(err,result){
 
-    document.getElementById("tabungan").innerText =
-    "Rp " + rupiah(totalTabungan);
+            if(err){
+                console.log(err);
+                res.json([]);
+            }else{
+                res.json(result);
+            }
 
-}
+        });
 
-ambilData();
+    }
 
+});
+
+// ======================
 // HAPUS DATA
+// ======================
 
-function hapusData(id){
+app.delete("/hapus/:id", async (req,res)=>{
 
-    let konfirmasi = confirm("Yakin mau hapus data ini?");
+    let id = req.params.id;
 
-    if(!konfirmasi) return;
+    // POSTGRESQL
+    if(mode == "postgres"){
 
-    fetch(`/hapus/${id}`,{
-        method:"DELETE"
-    })
-    .then(res => res.text())
-    .then(data => {
+        try{
 
-        alert(data);
+            await db.query(
+                "DELETE FROM riwayat WHERE id = $1",
+                [id]
+            );
 
-        ambilData();
+            res.send("Berhasil hapus");
 
-    });
+        }catch(err){
 
-}
+            console.log(err);
+            res.send("Gagal hapus");
 
+        }
+
+    }
+
+    // MYSQL
+    else{
+
+        let sql = "DELETE FROM riwayat WHERE id = ?";
+
+        db.query(sql,[id], function(err){
+
+            if(err){
+                console.log(err);
+                res.send("Gagal hapus");
+            }else{
+                res.send("Berhasil hapus");
+            }
+
+        });
+
+    }
+
+});
+
+// ======================
+// HAPUS SEMUA + RESET ID
+// ======================
+
+app.delete("/hapus-semua", async (req,res)=>{
+
+    // POSTGRESQL
+    if(mode == "postgres"){
+
+        try{
+
+            await db.query(
+                "TRUNCATE TABLE riwayat RESTART IDENTITY"
+            );
+
+            res.send("Semua data berhasil dihapus");
+
+        }catch(err){
+
+            console.log(err);
+            res.send("Gagal hapus semua");
+
+        }
+
+    }
+
+    // MYSQL
+    else{
+
+        let sql = "TRUNCATE TABLE riwayat";
+
+        db.query(sql, function(err){
+
+            if(err){
+                console.log(err);
+                res.send("Gagal hapus semua");
+            }else{
+                res.send("Semua data berhasil dihapus");
+            }
+
+        });
+
+    }
+
+});
+
+// ======================
 // EDIT DATA
+// ======================
 
-function editData(id){
+app.put("/edit/:id", async (req,res)=>{
 
-    let item = dataPengeluaran.find(d => d.id == id);
+    let id = req.params.id;
+    let { tanggal, nama, jumlah } = req.body;
 
-    document.getElementById("tanggal").value =
-    item.tanggal.split("T")[0];
+    // POSTGRESQL
+    if(mode == "postgres"){
 
-    document.getElementById("nama").value =
-    item.nama;
+        try{
 
-    document.getElementById("jumlah").value =
-    item.jumlah;
+            await db.query(
+                "UPDATE riwayat SET tanggal=$1, nama=$2, jumlah=$3 WHERE id=$4",
+                [tanggal,nama,jumlah,id]
+            );
 
-    editId = id;
+            res.send("Berhasil edit");
 
-}
+        }catch(err){
+
+            console.log(err);
+            res.send("Gagal edit");
+
+        }
+
+    }
+
+    // MYSQL
+    else{
+
+        let sql = "UPDATE riwayat SET tanggal=?, nama=?, jumlah=? WHERE id=?";
+
+        db.query(sql,[tanggal,nama,jumlah,id], function(err){
+
+            if(err){
+                console.log(err);
+                res.send("Gagal edit");
+            }else{
+                res.send("Berhasil edit");
+            }
+
+        });
+
+    }
+
+});
+
+// ======================
+// JALANKAN SERVER
+// ======================
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, function(){
+    console.log("Server berjalan di port " + PORT);
+});

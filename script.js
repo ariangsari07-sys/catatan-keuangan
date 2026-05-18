@@ -4,6 +4,7 @@ let editId = null;
 
 // FORMAT ANGKA
 function formatAngka(input){
+
     let angka = input.value.replace(/[^0-9]/g,'');
 
     if(angka == ""){
@@ -12,20 +13,26 @@ function formatAngka(input){
     }
 
     input.value = "Rp." + Number(angka).toLocaleString("id-ID");
+
 }
 
 // AMBIL ANGKA
 function ambilAngka(teks){
+
     return Number(teks.replace(/[^0-9]/g,''));
+
 }
 
 // FORMAT RUPIAH
 function rupiah(angka){
+
     return Number(angka).toLocaleString("id-ID");
+
 }
 
 // FORMAT TANGGAL + HARI
 function formatTanggal(tanggal){
+
     let t = new Date(tanggal);
 
     return t.toLocaleDateString("id-ID", {
@@ -34,20 +41,27 @@ function formatTanggal(tanggal){
         month: "long",
         year: "numeric"
     });
+
 }
 
+// ======================
 // TAMBAH SALDO
+// ======================
+
 function tambahSaldo(){
 
     let isiInput = document.getElementById("saldoAwal").value;
     let tambah = ambilAngka(isiInput);
 
     if(tambah <= 0){
+
         alert("Masukkan nominal yang benar!");
         return;
+
     }
 
-    let tanggal = new Date().toISOString();
+    // TANPA JAM
+    let tanggal = new Date().toISOString().split("T")[0];
 
     fetch("/tambah",{
         method:"POST",
@@ -62,13 +76,21 @@ function tambahSaldo(){
     })
     .then(res => res.text())
     .then(data => {
+
         alert(data);
+
         document.getElementById("saldoAwal").value = "";
+
         ambilData();
+
     });
+
 }
 
-// TAMBAH PENGELUARAN
+// ======================
+// TAMBAH DATA
+// ======================
+
 function tambahData(){
 
     let tanggal = document.getElementById("tanggal").value;
@@ -76,8 +98,10 @@ function tambahData(){
     let jumlah = document.getElementById("jumlah").value;
 
     if(tanggal == "" || nama == "" || jumlah == ""){
+
         alert("Isi semua data!");
         return;
+
     }
 
     let angkaJumlah = ambilAngka(jumlah);
@@ -98,14 +122,19 @@ function tambahData(){
         })
         .then(res => res.text())
         .then(data => {
+
             alert(data);
+
             editId = null;
+
             ambilData();
+
         });
 
-    } 
+    }
+
     // MODE TAMBAH
-    else {
+    else{
 
         fetch("/tambah",{
             method:"POST",
@@ -120,25 +149,31 @@ function tambahData(){
         })
         .then(res => res.text())
         .then(data => {
+
             alert(data);
+
             ambilData();
+
         });
+
     }
 
     document.getElementById("tanggal").value = "";
     document.getElementById("nama").value = "";
     document.getElementById("jumlah").value = "";
 
-    console.log("EDIT ID:", editId);
 }
 
-// RESET SALDO (TIDAK HAPUS DATA)
+// ======================
+// RESET SALDO
+// ======================
+
 function simpanSaldo(){
 
     let konfirmasi = confirm("Simpan sisa saldo ke tabungan & reset?");
+
     if(!konfirmasi) return;
 
-    // HITUNG SISA DARI DATA SEKARANG
     let totalMasuk = 0;
     let totalKeluar = 0;
 
@@ -147,37 +182,52 @@ function simpanSaldo(){
         let item = dataPengeluaran[i];
 
         if(item.nama === "Reset Saldo"){
+
             totalMasuk = 0;
             totalKeluar = 0;
+
         }
+
         else if(item.nama === "Tambah Saldo"){
+
             totalMasuk += Number(item.jumlah);
+
         }
+
         else if(item.nama !== "Tabungan"){
+
             totalKeluar += Number(item.jumlah);
+
         }
+
     }
 
     let sisa = totalMasuk - totalKeluar;
 
-    let tanggal = new Date().toISOString();
+    // TANPA JAM
+    let tanggal = new Date().toISOString().split("T")[0];
 
-    // SIMPAN KE TABUNGAN
+    // SIMPAN TABUNGAN
     fetch("/tambah",{
         method:"POST",
-        headers:{"Content-Type":"application/json"},
+        headers:{
+            "Content-Type":"application/json"
+        },
         body: JSON.stringify({
             tanggal: tanggal,
             nama: "Tabungan",
             jumlah: sisa
         })
     })
+
     .then(() => {
 
         // RESET BULAN
         return fetch("/tambah",{
             method:"POST",
-            headers:{"Content-Type":"application/json"},
+            headers:{
+                "Content-Type":"application/json"
+            },
             body: JSON.stringify({
                 tanggal: tanggal,
                 nama: "Reset Saldo",
@@ -186,13 +236,21 @@ function simpanSaldo(){
         });
 
     })
+
     .then(() => {
+
         alert("Saldo dipindahkan ke tabungan & berhasil reset");
+
         ambilData();
+
     });
+
 }
 
+// ======================
 // AMBIL DATA
+// ======================
+
 function ambilData(){
 
     fetch("/data")
@@ -200,42 +258,58 @@ function ambilData(){
     .then(data => {
 
         dataPengeluaran = data;
+
         tampilData();
 
     });
 
 }
 
+// ======================
 // TAMPIL DATA
+// ======================
+
 function tampilData(){
 
     let isi = document.getElementById("isiData");
+
     isi.innerHTML = "";
 
     let totalMasuk = 0;
     let totalKeluar = 0;
     let totalTabungan = 0;
 
-    for(let i=dataPengeluaran.length - 1; i >= 0; i--){
+    for(let i = dataPengeluaran.length - 1; i >= 0; i--){
 
         let item = dataPengeluaran[i];
 
-        // RESET BULAN
+        // TABUNGAN
         if(item.nama === "Tabungan"){
+
             totalTabungan += Number(item.jumlah);
+
         }
 
+        // RESET
         else if(item.nama === "Reset Saldo"){
+
             totalMasuk = 0;
             totalKeluar = 0;
+
         }
 
+        // TAMBAH SALDO
         else if(item.nama === "Tambah Saldo"){
+
             totalMasuk += Number(item.jumlah);
-        } 
-        
-        else {
+
+        }
+
+        // PENGELUARAN
+        else{
+
             totalKeluar += Number(item.jumlah);
+
         }
 
         isi.innerHTML += `
@@ -245,24 +319,38 @@ function tampilData(){
             <td>Rp ${rupiah(item.jumlah)}</td>
             <td>
                 <button class="btn-edit" onclick="editData(${item.id})">Edit</button>
+
                 <button class="btn-hapus" onclick="hapusData(${item.id})">Hapus</button>
             </td>
         </tr>
         `;
+
     }
 
-    document.getElementById("tampilSaldo").innerText = "Rp " + rupiah(totalMasuk);
-    document.getElementById("totalKeluar").innerText = "Rp " + rupiah(totalKeluar);
-    document.getElementById("sisaSaldo").innerText = "Rp " + rupiah(totalMasuk - totalKeluar);
-    document.getElementById("tabungan").innerText = "Rp " + rupiah(totalTabungan);
+    document.getElementById("tampilSaldo").innerText =
+    "Rp " + rupiah(totalMasuk);
+
+    document.getElementById("totalKeluar").innerText =
+    "Rp " + rupiah(totalKeluar);
+
+    document.getElementById("sisaSaldo").innerText =
+    "Rp " + rupiah(totalMasuk - totalKeluar);
+
+    document.getElementById("tabungan").innerText =
+    "Rp " + rupiah(totalTabungan);
+
 }
 
 ambilData();
 
-//HAPUS DATA
+// ======================
+// HAPUS DATA
+// ======================
+
 function hapusData(id){
 
     let konfirmasi = confirm("Yakin mau hapus data ini?");
+
     if(!konfirmasi) return;
 
     fetch(`/hapus/${id}`,{
@@ -270,20 +358,32 @@ function hapusData(id){
     })
     .then(res => res.text())
     .then(data => {
+
         alert(data);
+
         ambilData();
+
     });
+
 }
 
-//EDIT DATA
+// ======================
+// EDIT DATA
+// ======================
+
 function editData(id){
 
     let item = dataPengeluaran.find(d => d.id == id);
 
-    document.getElementById("tanggal").value = item.tanggal.split("T")[0];
-    document.getElementById("nama").value = item.nama;
-    document.getElementById("jumlah").value = item.jumlah;
+    document.getElementById("tanggal").value =
+    item.tanggal.split("T")[0];
+
+    document.getElementById("nama").value =
+    item.nama;
+
+    document.getElementById("jumlah").value =
+    item.jumlah;
 
     editId = id;
-}
 
+}
