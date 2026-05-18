@@ -44,19 +44,69 @@
     </div>
 
     <!-- TABUNGAN -->
-    <div class="card">
-        <h3>🏦 Tabungan</h3>
-        <p>Total Tabungan:
-            <span id="totalTabungan">Rp 0</span>
-        </p>
+    <div class="riwayat-wrapper">
 
-        <input type="text" id="inputTabungan" placeholder="Nominal tabungan" oninput="formatAngka(this)">
+    <!-- RIWAYAT -->
+    <div class="card riwayat-card">
 
-        <div class="btn-group">
-            <button onclick="simpanKeTabungan()">Simpan</button>
-            <button onclick="ambilTabungan()">Ambil</button>
-        </div>
+        <h3>📋 Riwayat Pengeluaran</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Nama</th>
+                    <th>Jumlah</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody id="isiData"></tbody>
+        </table>
+
     </div>
+
+    <!-- TABUNGAN -->
+    <div class="card tabungan-card">
+
+        <h3>🏦 Tabungan</h3>
+
+        <h2 id="totalTabungan">Rp 0</h2>
+
+        <input
+        type="text"
+        id="inputTabungan"
+        placeholder="Nominal"
+        oninput="formatAngka(this)">
+
+        <button onclick="ambilTabungan()">
+            Ambil Tabungan
+        </button>
+
+        <button onclick="toggleRiwayatTabungan()">
+            Lihat Riwayat
+        </button>
+
+        <div id="riwayatTabungan" style="display:none; margin-top:15px;">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Aktivitas</th>
+                        <th>Jumlah</th>
+                    </tr>
+                </thead>
+
+                <tbody id="isiTabungan"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
 
     <!-- Riwayat -->
     <div class="card">
@@ -72,23 +122,6 @@
             </thead>
 
             <tbody id="isiData"></tbody>
-        </table>
-    </div>
-
-    <!-- RIWAYAT TABUNGAN -->
-    <div class="card">
-        <h3>📦 Riwayat Tabungan</h3>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Tanggal</th>
-                    <th>Aktivitas</th>
-                    <th>Jumlah</th>
-                </tr>
-            </thead>
-
-        <tbody id="isiTabungan"></tbody>
         </table>
     </div>
 

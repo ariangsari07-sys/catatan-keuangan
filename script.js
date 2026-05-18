@@ -289,25 +289,30 @@ function tampilData(){
 
         // TABUNGAN
         if(item.nama === "Masuk Tabungan"){
-            totalTabungan += Number(item.jumlah);
-            isiTabungan.innerHTML += `
-            <tr>
-                <td>${formatTanggal(item.tanggal)}</td>
-                <td>${item.nama}</td>
-                <td>Rp ${rupiah(item.jumlah)}</td>
-            </tr>
-            `;
-        }
-        else if(item.nama === "Ambil Tabungan"){
-            totalTabungan -= Number(item.jumlah);
-            isiTabungan.innerHTML += `
-            <tr>
-                <td>${formatTanggal(item.tanggal)}</td>
-                <td>${item.nama}</td>
-                <td>Rp ${rupiah(item.jumlah)}</td>
-            </tr>
-            `;
-        }
+
+    totalTabungan += Number(item.jumlah);
+
+    isiTabungan.innerHTML += `
+    <tr>
+        <td>${formatTanggal(item.tanggal)}</td>
+        <td>${item.nama}</td>
+        <td>Rp ${rupiah(item.jumlah)}</td>
+    </tr>
+    `;
+}
+
+else if(item.nama === "Ambil Tabungan"){
+
+    totalTabungan -= Number(item.jumlah);
+
+    isiTabungan.innerHTML += `
+    <tr>
+        <td>${formatTanggal(item.tanggal)}</td>
+        <td>${item.nama}</td>
+        <td>Rp ${rupiah(item.jumlah)}</td>
+    </tr>
+    `;
+}
         // RESET
         else if(item.nama === "Reset Saldo"){
             totalMasuk = 0;
@@ -373,4 +378,22 @@ function editData(id){
     document.getElementById("jumlah").value = item.jumlah;
 
     editId = id;
+}
+
+// TOGGLE RIWAYAT TABUNGAN
+function toggleRiwayatTabungan(){
+
+    let riwayat =
+    document.getElementById("riwayatTabungan");
+
+    if(riwayat.style.display == "none"){
+
+        riwayat.style.display = "block";
+
+    }else{
+
+        riwayat.style.display = "none";
+
+    }
+
 }
