@@ -150,20 +150,18 @@ tr:hover{
     background-color: #dc2626;
 }
 
-.riwayat-wrapper{
+.ringkasan-wrapper{
     display:flex;
     gap:20px;
     align-items:flex-start;
 }
 
-.riwayat-card{
+.ringkasan-card{
     flex:2;
 }
 
 .tabungan-card{
     flex:1;
-    position:sticky;
-    top:20px;
 }
 
 .tabungan-card h2{
@@ -176,11 +174,9 @@ tr:hover{
 }
 
 @media(max-width:768px){
-    .riwayat-wrapper{
+
+    .ringkasan-wrapper{
         flex-direction:column;
     }
-    .tabungan-card{
-        width:100%;
-        position:static;
-    }
+
 }

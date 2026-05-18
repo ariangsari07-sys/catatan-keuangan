@@ -34,35 +34,24 @@
     </div>
 
     <!-- Ringkasan -->
-    <div class="card">
+    <div class="ringkasan-wrapper">
+
+    <!-- RINGKASAN -->
+    <div class="card ringkasan-card">
+
         <h3>📊 Ringkasan</h3>
 
-        <p>Saldo Awal: <span id="tampilSaldo">Rp 0</span></p>
-        <p>Total Keluar: <span id="totalKeluar">Rp 0</span></p>
-        <p>Sisa Saldo: <span id="sisaSaldo">Rp 0</span></p>
-        <p>Tabungan: <span id="tabungan">Rp 0</span></p>
-    </div>
+        <p>Saldo Awal:
+            <span id="tampilSaldo">Rp 0</span>
+        </p>
 
-    <!-- TABUNGAN -->
-    <div class="riwayat-wrapper">
+        <p>Total Keluar:
+            <span id="totalKeluar">Rp 0</span>
+        </p>
 
-    <!-- RIWAYAT -->
-    <div class="card riwayat-card">
-
-        <h3>📋 Riwayat Pengeluaran</h3>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Tanggal</th>
-                    <th>Nama</th>
-                    <th>Jumlah</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-
-            <tbody id="isiData"></tbody>
-        </table>
+        <p>Sisa Saldo:
+            <span id="sisaSaldo">Rp 0</span>
+        </p>
 
     </div>
 
@@ -87,9 +76,11 @@
             Lihat Riwayat
         </button>
 
-        <div id="riwayatTabungan" style="display:none; margin-top:15px;">
+        <div id="riwayatTabungan"
+        style="display:none; margin-top:15px;">
 
             <table>
+
                 <thead>
                     <tr>
                         <th>Tanggal</th>
