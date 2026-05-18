@@ -149,3 +149,38 @@ tr:hover{
 .btn-hapus:hover{
     background-color: #dc2626;
 }
+
+.riwayat-wrapper{
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
+}
+
+.riwayat-card{
+    flex:2;
+}
+
+.tabungan-card{
+    flex:1;
+    position:sticky;
+    top:20px;
+}
+
+.tabungan-card h2{
+    color:#16a34a;
+    margin-bottom:20px;
+}
+
+.tabungan-card button{
+    margin-top:10px;
+}
+
+@media(max-width:768px){
+    .riwayat-wrapper{
+        flex-direction:column;
+    }
+    .tabungan-card{
+        width:100%;
+        position:static;
+    }
+}
