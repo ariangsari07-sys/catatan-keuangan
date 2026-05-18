@@ -138,55 +138,7 @@ app.get("/data", async (req,res)=>{
     }
 
 });
-
 // HAPUS DATA
-
-app.delete("/hapus/:id", async (req,res)=>{
-
-    let id = req.params.id;
-
-    // POSTGRESQL
-    if(mode == "postgres"){
-
-        try{
-
-            await db.query(
-                "DELETE FROM riwayat WHERE id = $1",
-                [id]
-            );
-
-            res.send("Berhasil hapus");
-
-        }catch(err){
-
-            console.log(err);
-            res.send("Gagal hapus");
-
-        }
-
-    }
-
-    // MYSQL
-    else{
-
-        let sql = "DELETE FROM riwayat WHERE id = ?";
-
-        db.query(sql,[id], function(err){
-
-            if(err){
-                console.log(err);
-                res.send("Gagal hapus");
-            }else{
-                res.send("Berhasil hapus");
-            }
-
-        });
-
-    }
-
-});
-
-// HAPUS SEMUA + RESET ID
 app.delete("/hapus/:id", async (req,res)=>{
 
     let id = req.params.id;
