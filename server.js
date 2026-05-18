@@ -7,9 +7,7 @@ const app = express();
 let db;
 let mode = "";
 
-// ======================
 // KONEKSI DATABASE
-// ======================
 
 if(process.env.DATABASE_URL){
 
@@ -52,10 +50,7 @@ if(process.env.DATABASE_URL){
 app.use(express.static(__dirname));
 app.use(express.json());
 
-// ======================
 // TAMBAH DATA
-// ======================
-
 app.post("/tambah", async (req,res)=>{
 
     let { tanggal, nama, jumlah } = req.body;
@@ -101,10 +96,7 @@ app.post("/tambah", async (req,res)=>{
 
 });
 
-// ======================
 // AMBIL DATA
-// ======================
-
 app.get("/data", async (req,res)=>{
 
     // POSTGRESQL
@@ -147,9 +139,7 @@ app.get("/data", async (req,res)=>{
 
 });
 
-// ======================
 // HAPUS DATA
-// ======================
 
 app.delete("/hapus/:id", async (req,res)=>{
 
@@ -196,11 +186,10 @@ app.delete("/hapus/:id", async (req,res)=>{
 
 });
 
-// ======================
 // HAPUS SEMUA + RESET ID
-// ======================
+app.delete("/hapus/:id", async (req,res)=>{
 
-app.delete("/hapus-semua", async (req,res)=>{
+    let id = req.params.id;
 
     // POSTGRESQL
     if(mode == "postgres"){
@@ -208,15 +197,30 @@ app.delete("/hapus-semua", async (req,res)=>{
         try{
 
             await db.query(
-                "TRUNCATE TABLE riwayat RESTART IDENTITY"
+                "DELETE FROM riwayat WHERE id = $1",
+                [id]
             );
 
-            res.send("Semua data berhasil dihapus");
+            // CEK SISA DATA
+            let cek = await db.query(
+                "SELECT COUNT(*) FROM riwayat"
+            );
+
+            // JIKA KOSONG RESET ID
+            if(Number(cek.rows[0].count) === 0){
+
+                await db.query(
+                    "ALTER SEQUENCE riwayat_id_seq RESTART WITH 1"
+                );
+
+            }
+
+            res.send("Berhasil hapus");
 
         }catch(err){
 
             console.log(err);
-            res.send("Gagal hapus semua");
+            res.send("Gagal hapus");
 
         }
 
@@ -225,15 +229,24 @@ app.delete("/hapus-semua", async (req,res)=>{
     // MYSQL
     else{
 
-        let sql = "TRUNCATE TABLE riwayat";
+        let sql = "DELETE FROM riwayat WHERE id = ?";
 
-        db.query(sql, function(err){
+        db.query(sql,[id], function(err){
 
             if(err){
+
                 console.log(err);
-                res.send("Gagal hapus semua");
+                res.send("Gagal hapus");
+
             }else{
-                res.send("Semua data berhasil dihapus");
+
+                // RESET AUTO INCREMENT
+                db.query(
+                    "ALTER TABLE riwayat AUTO_INCREMENT = 1"
+                );
+
+                res.send("Berhasil hapus");
+
             }
 
         });
@@ -242,9 +255,7 @@ app.delete("/hapus-semua", async (req,res)=>{
 
 });
 
-// ======================
 // EDIT DATA
-// ======================
 
 app.put("/edit/:id", async (req,res)=>{
 
@@ -292,9 +303,7 @@ app.put("/edit/:id", async (req,res)=>{
 
 });
 
-// ======================
 // JALANKAN SERVER
-// ======================
 
 const PORT = process.env.PORT || 3000;
 

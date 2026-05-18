@@ -44,9 +44,7 @@ function formatTanggal(tanggal){
 
 }
 
-// ======================
 // TAMBAH SALDO
-// ======================
 
 function tambahSaldo(){
 
@@ -87,9 +85,7 @@ function tambahSaldo(){
 
 }
 
-// ======================
 // TAMBAH DATA
-// ======================
 
 function tambahData(){
 
@@ -164,9 +160,7 @@ function tambahData(){
 
 }
 
-// ======================
 // RESET SALDO
-// ======================
 
 function simpanSaldo(){
 
@@ -247,9 +241,7 @@ function simpanSaldo(){
 
 }
 
-// ======================
 // AMBIL DATA
-// ======================
 
 function ambilData(){
 
@@ -265,9 +257,7 @@ function ambilData(){
 
 }
 
-// ======================
 // TAMPIL DATA
-// ======================
 
 function tampilData(){
 
@@ -343,9 +333,7 @@ function tampilData(){
 
 ambilData();
 
-// ======================
 // HAPUS DATA
-// ======================
 
 function hapusData(id){
 
@@ -367,9 +355,7 @@ function hapusData(id){
 
 }
 
-// ======================
 // EDIT DATA
-// ======================
 
 function editData(id){
 
