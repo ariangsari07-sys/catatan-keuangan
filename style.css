@@ -178,3 +178,22 @@ tr:hover{
     }
 
 }
+
+.ringkasan-card p{
+    font-size:18px;
+    margin:18px 0;
+    font-weight:500;
+}
+
+.ringkasan-card span{
+    font-size:24px;
+    font-weight:bold;
+    color:#2563eb;
+}
+
+.tabungan-card h2{
+    font-size:32px;
+    color:#16a34a;
+    margin-top:10px;
+    margin-bottom:20px;
+}
