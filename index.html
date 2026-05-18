@@ -68,13 +68,17 @@
         placeholder="Nominal"
         oninput="formatAngka(this)">
 
-        <button onclick="ambilTabungan()">
-            Ambil Tabungan
-        </button>
+        <div class="btn-tabungan">
 
-        <button onclick="toggleRiwayatTabungan()">
-            Lihat Riwayat
-        </button>
+    <button onclick="ambilTabungan()">
+        Ambil
+    </button>
+
+    <button onclick="toggleRiwayatTabungan()">
+        Riwayat
+    </button>
+
+</div>
 
         <div id="riwayatTabungan"
         style="display:none; margin-top:15px;">
