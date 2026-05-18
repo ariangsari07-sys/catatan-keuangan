@@ -188,12 +188,12 @@ tr:hover{
 .ringkasan-card span{
     font-size:24px;
     font-weight:bold;
-    color:#2563eb;
+    color: black;
 }
 
 .tabungan-card h2{
     font-size:32px;
-    color:#16a34a;
+    color: rgb(58, 55, 55);
     margin-top:10px;
     margin-bottom:20px;
 }
