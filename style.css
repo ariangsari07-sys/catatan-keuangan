@@ -156,13 +156,13 @@ tr:hover{
     align-items:flex-start;
 }
 
-.ringkasan-card,
-.tabungan-card{
-    width:50%;
+.ringkasan-card{
+    width: 50%;
+    height: 125px;
 }
 
-.ringkasan-card{
-    min-height: 200px;
+.tabungan-card{
+    width: 50%;
 }
 
 .btn-tabungan{
