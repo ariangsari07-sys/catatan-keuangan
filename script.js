@@ -137,7 +137,7 @@ function simpanSaldo(){
     let totalMasuk = 0;
     let totalKeluar = 0;
 
-    // HITUNG SALDO SEKARANG
+    // HITUNG SALDO SAAT INI
     for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
@@ -159,7 +159,7 @@ function simpanSaldo(){
 
     let tanggal = new Date().toISOString();
 
-    // PINDAHKAN KE TABUNGAN
+    // SIMPAN KE TABUNGAN
     fetch("/tambah",{
         method:"POST",
         headers:{
@@ -172,9 +172,11 @@ function simpanSaldo(){
         })
     })
 
+    .then(res => res.text())
+
     .then(() => {
 
-        // RESET SEMUA RINGKASAN
+        // RESET RINGKASAN
         return fetch("/tambah",{
             method:"POST",
             headers:{
@@ -189,12 +191,19 @@ function simpanSaldo(){
 
     })
 
+    .then(res => res.text())
+
     .then(() => {
 
         alert("Saldo berhasil dipindahkan ke tabungan");
 
         ambilData();
 
+    })
+
+    .catch(err => {
+        console.log(err);
+        alert("Gagal memindahkan saldo");
     });
 
 }
