@@ -283,7 +283,7 @@ function tampilData(){
     
     isiTabungan.innerHTML = "";
 
-    for(let i = dataPengeluaran.length - 1; i >= 0; i--){
+    for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
 
