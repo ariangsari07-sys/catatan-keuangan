@@ -221,58 +221,53 @@ function ambilData(){
 // TAMPIL DATA
 function tampilData(){
     let isi = document.getElementById("isiData");
-
     isi.innerHTML = "";
 
     let totalMasuk = 0;
     let totalKeluar = 0;
     let totalTabungan = 0;
     let isiTabungan = document.getElementById("isiTabungan");
-    
     isiTabungan.innerHTML = "";
 
     for(let i = 0; i < dataPengeluaran.length; i++){
-
         let item = dataPengeluaran[i];
 
         // TABUNGAN
         if(item.nama === "Tabungan"){
+            totalTabungan += Number(item.jumlah);
+            isiTabungan.innerHTML += `
+            <tr>
+                <td>${formatTanggal(item.tanggal)}</td>
+                <td>${item.nama}</td>
+                <td>Rp ${rupiah(item.jumlah)}</td>
+            </tr>
+            `;
+        }
 
-    totalTabungan += Number(item.jumlah);
+        else if(item.nama === "Ambil Tabungan"){
+            totalTabungan -= Number(item.jumlah);
+            isiTabungan.innerHTML += `
+            
+            <tr>
+                <td>${formatTanggal(item.tanggal)}</td>
+                <td>${item.nama}</td>
+                <td>Rp ${rupiah(item.jumlah)}</td>
+            </tr>
+            `;
+        }
 
-    isiTabungan.innerHTML += `
-    <tr>
-        <td>${formatTanggal(item.tanggal)}</td>
-        <td>${item.nama}</td>
-        <td>Rp ${rupiah(item.jumlah)}</td>
-    </tr>
-    `;
-}
-
-else if(item.nama === "Ambil Tabungan"){
-
-    totalTabungan -= Number(item.jumlah);
-
-    isiTabungan.innerHTML += `
-    <tr>
-        <td>${formatTanggal(item.tanggal)}</td>
-        <td>${item.nama}</td>
-        <td>Rp ${rupiah(item.jumlah)}</td>
-    </tr>
-    `;
-}
         // RESET
         if(item.nama === "Reset Saldo"){
-    totalMasuk = 0;
-    totalKeluar = 0;
-    continue;
-}
-}
+            totalMasuk = 0;
+            totalKeluar = 0;
+            continue;
+        }
 
         // TAMBAH SALDO
         else if(item.nama === "Tambah Saldo"){
             totalMasuk += Number(item.jumlah);
         }
+
         // PENGELUARAN
         else{
             totalKeluar += Number(item.jumlah);
