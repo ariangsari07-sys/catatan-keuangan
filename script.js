@@ -130,102 +130,36 @@ function tambahData(){
 
 // RESET SALDO
 function simpanSaldo(){
-    let konfirmasi = confirm("Simpan sisa saldo ke tabungan & reset?");
 
+    let konfirmasi = confirm("Pindahkan sisa saldo ke tabungan?");
     if(!konfirmasi) return;
 
     let totalMasuk = 0;
     let totalKeluar = 0;
 
-    for(let i = dataPengeluaran.length - 1; i >= 0; i--){
+    // HITUNG SALDO SEKARANG
+    for(let i = 0; i < dataPengeluaran.length; i++){
+
         let item = dataPengeluaran[i];
 
-        if(item.nama === "Reset Saldo"){
-
-            totalMasuk = 0;
-            totalKeluar = 0;
-
-        }
-        else if(item.nama === "Tambah Saldo"){
+        if(item.nama === "Tambah Saldo"){
             totalMasuk += Number(item.jumlah);
         }
-        else if(item.nama !== "Tabungan"){
+
+        else if(
+            item.nama !== "Tabungan" &&
+            item.nama !== "Reset Saldo"
+        ){
             totalKeluar += Number(item.jumlah);
         }
+
     }
 
     let sisa = totalMasuk - totalKeluar;
 
-    // SIMPAN KE TABUNGAN
-function simpanKeTabungan(){
-    let nominal = ambilAngka(
-        document.getElementById("inputTabungan").value
-    );
-
-    if(nominal <= 0){
-        alert("Masukkan nominal!");
-        return;
-    }
-
     let tanggal = new Date().toISOString();
 
-    fetch("/tambah",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            tanggal: tanggal,
-            nama: "Masuk Tabungan",
-            jumlah: nominal
-        })
-    })
-    .then(res => res.text())
-    .then(data => {
-        alert(data);
-
-        document.getElementById("inputTabungan").value = "";
-        ambilData();
-    });
-}
-
-// AMBIL TABUNGAN
-function ambilTabungan(){
-    let nominal = ambilAngka(
-        document.getElementById("inputTabungan").value
-    );
-
-    if(nominal <= 0){
-        alert("Masukkan nominal!");
-        return;
-    }
-
-    let tanggal = new Date().toISOString();
-
-    fetch("/tambah",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            tanggal: tanggal,
-            nama: "Ambil Tabungan",
-            jumlah: nominal
-        })
-    })
-    .then(res => res.text())
-    .then(data => {
-        alert(data);
-
-        document.getElementById("inputTabungan").value = "";
-        ambilData();
-    });
-}
-
-    // TANPA JAM
-    let tanggal = new Date().toISOString().split("T")[0];
-
-    // SIMPAN TABUNGAN
+    // PINDAHKAN KE TABUNGAN
     fetch("/tambah",{
         method:"POST",
         headers:{
@@ -239,7 +173,8 @@ function ambilTabungan(){
     })
 
     .then(() => {
-        // RESET BULAN
+
+        // RESET SEMUA RINGKASAN
         return fetch("/tambah",{
             method:"POST",
             headers:{
@@ -255,9 +190,13 @@ function ambilTabungan(){
     })
 
     .then(() => {
-        alert("Saldo dipindahkan ke tabungan & berhasil reset");
+
+        alert("Saldo berhasil dipindahkan ke tabungan");
+
         ambilData();
+
     });
+
 }
 
 // AMBIL DATA
@@ -314,10 +253,10 @@ else if(item.nama === "Ambil Tabungan"){
     `;
 }
         // RESET
-        else if(item.nama === "Reset Saldo"){
-            totalMasuk = 0;
-            totalKeluar = 0;
-        }
+        if(item.nama === "Reset Saldo"){
+    break;
+}
+
         // TAMBAH SALDO
         else if(item.nama === "Tambah Saldo"){
             totalMasuk += Number(item.jumlah);
