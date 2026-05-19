@@ -236,7 +236,7 @@ function tampilData(){
         let item = dataPengeluaran[i];
 
         // TABUNGAN
-        if(item.nama === "Masuk Tabungan"){
+        if(item.nama === "Tabungan"){
 
     totalTabungan += Number(item.jumlah);
 
