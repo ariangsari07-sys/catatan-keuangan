@@ -263,7 +263,10 @@ else if(item.nama === "Ambil Tabungan"){
 }
         // RESET
         if(item.nama === "Reset Saldo"){
-    break;
+    totalMasuk = 0;
+    totalKeluar = 0;
+    continue;
+}
 }
 
         // TAMBAH SALDO
