@@ -34,7 +34,7 @@
     </div>
 
     <!-- RINGKASAN + TABUNGAN -->
-<div class="ringkasan-wrapper">
+    <div class="ringkasan-wrapper">
 
     <!-- RINGKASAN -->
     <div class="card ringkasan-card">
@@ -69,22 +69,12 @@
         oninput="formatAngka(this)">
 
         <div class="btn-tabungan">
+            <button onclick="ambilTabungan()">Ambil</button>
+            <button onclick="toggleRiwayatTabungan()">Riwayat</button>
+        </div>
 
-    <button onclick="ambilTabungan()">
-        Ambil
-    </button>
-
-    <button onclick="toggleRiwayatTabungan()">
-        Riwayat
-    </button>
-
-</div>
-
-        <div id="riwayatTabungan"
-        style="display:none; margin-top:15px;">
-
+        <div id="riwayatTabungan" style="display:none; margin-top:15px;">
             <table>
-
                 <thead>
                     <tr>
                         <th>Tanggal</th>
@@ -92,38 +82,27 @@
                         <th>Jumlah</th>
                     </tr>
                 </thead>
-
                 <tbody id="isiTabungan"></tbody>
-
             </table>
-
         </div>
-
     </div>
 
-</div>
+    <!-- RIWAYAT -->
+    <div class="card">
+        <h3>📋 Riwayat Pengeluaran</h3>
 
-<!-- RIWAYAT -->
-<div class="card">
-
-    <h3>📋 Riwayat Pengeluaran</h3>
-
-    <table>
-
-        <thead>
-            <tr>
-                <th>Tanggal</th>
-                <th>Nama</th>
-                <th>Jumlah</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-
-        <tbody id="isiData"></tbody>
-
-    </table>
-
-</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Nama</th>
+                    <th>Jumlah</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="isiData"></tbody>
+        </table>
+    </div>
 
 </div>
 
