@@ -130,7 +130,6 @@ function tambahData(){
 
 // RESET SALDO
 function simpanSaldo(){
-
     let konfirmasi = confirm("Pindahkan sisa saldo ke tabungan?");
     if(!konfirmasi) return;
 
@@ -156,7 +155,6 @@ function simpanSaldo(){
     }
 
     let sisa = totalMasuk - totalKeluar;
-
     let tanggal = new Date().toISOString();
 
     // SIMPAN KE TABUNGAN
@@ -173,7 +171,6 @@ function simpanSaldo(){
     })
 
     .then(res => res.text())
-
     .then(() => {
 
         // RESET RINGKASAN
@@ -192,20 +189,15 @@ function simpanSaldo(){
     })
 
     .then(res => res.text())
-
     .then(() => {
-
         alert("Saldo berhasil dipindahkan ke tabungan");
-
         ambilData();
-
     })
 
     .catch(err => {
         console.log(err);
         alert("Gagal memindahkan saldo");
     });
-
 }
 
 // AMBIL DATA
@@ -247,7 +239,6 @@ function tampilData(){
         else if(item.nama === "Ambil Tabungan"){
             totalTabungan -= Number(item.jumlah);
             isiTabungan.innerHTML += `
-            
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
                 <td>${item.nama}</td>
@@ -280,7 +271,6 @@ function tampilData(){
             <td>Rp ${rupiah(item.jumlah)}</td>
             <td>
                 <button class="btn-edit" onclick="editData(${item.id})">Edit</button>
-
                 <button class="btn-hapus" onclick="hapusData(${item.id})">Hapus</button>
             </td>
         </tr>
@@ -296,7 +286,6 @@ ambilData();
 
 // HAPUS DATA
 function hapusData(id){
-
     let konfirmasi = confirm("Yakin mau hapus data ini?");
 
     if(!konfirmasi) return;
@@ -304,15 +293,12 @@ function hapusData(id){
     fetch(`/hapus/${id}`,{
         method:"DELETE"
     })
+
     .then(res => res.text())
     .then(data => {
-
         alert(data);
-
         ambilData();
-
     });
-
 }
 
 // EDIT DATA
@@ -326,20 +312,15 @@ function editData(id){
     editId = id;
 }
 
-// TOGGLE RIWAYAT TABUNGAN
+// RIWAYAT TABUNGAN
 function toggleRiwayatTabungan(){
-
     let riwayat =
     document.getElementById("riwayatTabungan");
 
     if(riwayat.style.display == "none"){
-
         riwayat.style.display = "block";
 
     }else{
-
         riwayat.style.display = "none";
-
     }
-
 }
