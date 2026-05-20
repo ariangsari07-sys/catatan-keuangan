@@ -36,57 +36,53 @@
     <!-- RINGKASAN + TABUNGAN -->
     <div class="ringkasan-wrapper">
 
-    <!-- RINGKASAN -->
-    <div class="card ringkasan-card">
+        <!-- RINGKASAN -->
+        <div class="card ringkasan-card">
 
-        <h3>📊 Ringkasan</h3>
+            <h3>📊 Ringkasan</h3>
 
-        <p>Saldo Awal:
-            <span id="tampilSaldo">Rp 0</span>
-        </p>
+            <p>Saldo Awal:
+                <span id="tampilSaldo">Rp 0</span>
+            </p>
 
-        <p>Total Keluar:
-            <span id="totalKeluar">Rp 0</span>
-        </p>
+            <p>Total Keluar:
+                <span id="totalKeluar">Rp 0</span>
+            </p>
 
-        <p>Sisa Saldo:
-            <span id="sisaSaldo">Rp 0</span>
-        </p>
-
-    </div>
-
-    <!-- TABUNGAN -->
-    <div class="card tabungan-card">
-
-        <h3>🏦 Tabungan</h3>
-
-        <h2 id="totalTabungan">Rp 0</h2>
-
-        <input
-        type="text"
-        id="inputTabungan"
-        placeholder="Nominal"
-        oninput="formatAngka(this)">
-
-        <div class="btn-tabungan">
-            <button onclick="ambilTabungan()">Ambil</button>
-            <button onclick="toggleRiwayatTabungan()">Riwayat</button>
+            <p>Sisa Saldo:
+                <span id="sisaSaldo">Rp 0</span>
+            </p>
         </div>
 
-        <div id="riwayatTabungan" style="display:none; margin-top:15px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Aktivitas</th>
-                        <th>Jumlah</th>
-                    </tr>
-                </thead>
-                <tbody id="isiTabungan"></tbody>
-            </table>
+        <!-- TABUNGAN -->
+        <div class="card tabungan-card">
+
+            <h3>🏦 Tabungan</h3>
+
+            <h2 id="totalTabungan">Rp 0</h2>
+
+            <input type="text" id="inputTabungan" placeholder="Nominal" oninput="formatAngka(this)">
+
+            <div class="btn-tabungan">
+                <button onclick="ambilTabungan()">Ambil</button>
+                <button onclick="toggleRiwayatTabungan()">Riwayat</button>
+            </div>
+
+            <div id="riwayatTabungan" style="display:none; margin-top:15px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Aktivitas</th>
+                            <th>Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody id="isiTabungan"></tbody>
+                </table>
+            </div>
         </div>
     </div>
-
+    
     <!-- RIWAYAT -->
     <div class="card">
         <h3>📋 Riwayat Pengeluaran</h3>
