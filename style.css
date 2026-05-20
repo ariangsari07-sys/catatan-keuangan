@@ -157,12 +157,12 @@ tr:hover{
 }
 
 .ringkasan-card{
-    width: 50%;
-    height: 125px;
+    flex:1;
+    padding-bottom:5px;
 }
 
 .tabungan-card{
-    width: 50%;
+    flex:1;
 }
 
 .btn-tabungan{
