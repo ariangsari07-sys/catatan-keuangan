@@ -130,34 +130,42 @@ function tambahData(){
 
 // RESET SALDO
 function simpanSaldo(){
+
     let konfirmasi = confirm("Pindahkan sisa saldo ke tabungan?");
     if(!konfirmasi) return;
 
     let totalMasuk = 0;
     let totalKeluar = 0;
 
-    // HITUNG SALDO SAAT INI
     for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
 
+        // STOP SAAT RESET TERAKHIR
+        if(item.nama === "Reset Saldo"){
+            break;
+        }
+
+        // TAMBAH SALDO
         if(item.nama === "Tambah Saldo"){
             totalMasuk += Number(item.jumlah);
         }
 
+        // PENGELUARAN
         else if(
             item.nama !== "Masuk Tabungan" &&
-            item.nama !== "Reset Saldo"
+            item.nama !== "Ambil Tabungan"
         ){
             totalKeluar += Number(item.jumlah);
         }
-
     }
 
     let sisa = totalMasuk - totalKeluar;
-    let tanggal = new Date().toISOString();
 
-    // SIMPAN KE TABUNGAN
+    let tanggal =
+    new Date().toISOString().split("T")[0];
+
+    // MASUK TABUNGAN
     fetch("/tambah",{
         method:"POST",
         headers:{
@@ -170,10 +178,9 @@ function simpanSaldo(){
         })
     })
 
-    .then(res => res.text())
     .then(() => {
 
-        // RESET RINGKASAN
+        // RESET
         return fetch("/tambah",{
             method:"POST",
             headers:{
@@ -188,16 +195,22 @@ function simpanSaldo(){
 
     })
 
-    .then(res => res.text())
     .then(() => {
-        alert("Saldo berhasil dipindahkan ke tabungan");
+
+        alert("Saldo dipindahkan ke tabungan");
+
         ambilData();
+
     })
 
     .catch(err => {
+
         console.log(err);
-        alert("Gagal memindahkan saldo");
+
+        alert("Gagal");
+
     });
+
 }
 
 // AMBIL DATA
@@ -252,11 +265,22 @@ function tampilData(){
         }
 
         // RESET SALDO
-        if(item.nama === "Reset Saldo"){
-            totalMasuk = 0;
-            totalKeluar = 0;
-            continue;
-        }
+if(item.nama === "Reset Saldo"){
+
+    totalMasuk = 0;
+    totalKeluar = 0;
+
+    isi.innerHTML += `
+    <tr>
+        <td>${formatTanggal(item.tanggal)}</td>
+        <td>${item.nama}</td>
+        <td>Rp 0</td>
+        <td>-</td>
+    </tr>
+    `;
+
+    continue;
+}
        
         // TAMBAH SALDO
         if(item.nama === "Tambah Saldo"){
