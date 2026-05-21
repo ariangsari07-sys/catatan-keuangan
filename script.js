@@ -146,7 +146,7 @@ function simpanSaldo(){
         }
 
         else if(
-            item.nama !== "Tabungan" &&
+            item.nama !== "Masuk Tabungan" &&
             item.nama !== "Reset Saldo"
         ){
             totalKeluar += Number(item.jumlah);
@@ -165,7 +165,7 @@ function simpanSaldo(){
         },
         body: JSON.stringify({
             tanggal: tanggal,
-            nama: "Tabungan",
+            nama: "Masuk Tabungan",
             jumlah: sisa
         })
     })
@@ -226,7 +226,7 @@ function tampilData(){
         let item = dataPengeluaran[i];
 
         // TABUNGAN
-        if(item.nama === "Tabungan"){
+        if(item.nama === "Masuk Tabungan"){
             totalTabungan += Number(item.jumlah);
             isiTabungan.innerHTML += `
             <tr>
