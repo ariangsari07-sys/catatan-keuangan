@@ -215,11 +215,12 @@ function tampilData(){
     let isi = document.getElementById("isiData");
     isi.innerHTML = "";
 
+    let isiTabungan = document.getElementById("isiTabungan");
+    isiTabungan.innerHTML = "";
+
     let totalMasuk = 0;
     let totalKeluar = 0;
     let totalTabungan = 0;
-    let isiTabungan = document.getElementById("isiTabungan");
-    isiTabungan.innerHTML = "";
 
     for(let i = 0; i < dataPengeluaran.length; i++){
         let item = dataPengeluaran[i];
@@ -230,57 +231,70 @@ function tampilData(){
             isiTabungan.innerHTML += `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
-                <td>${item.nama}</td>
+                <td>Masuk</td>
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
             `;
+            continue;
         }
 
-        else if(item.nama === "Ambil Tabungan"){
+        // AMBIL TABUNGAN
+        if(item.nama === "Ambil Tabungan"){
             totalTabungan -= Number(item.jumlah);
             isiTabungan.innerHTML += `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
-                <td>${item.nama}</td>
+                <td>Ambil</td>
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
             `;
+            continue;
         }
 
-        // RESET
+        // RESET SALDO
         if(item.nama === "Reset Saldo"){
             totalMasuk = 0;
             totalKeluar = 0;
             continue;
         }
-
+       
         // TAMBAH SALDO
-        else if(item.nama === "Tambah Saldo"){
+        if(item.nama === "Tambah Saldo"){
             totalMasuk += Number(item.jumlah);
         }
-
+       
         // PENGELUARAN
         else{
             totalKeluar += Number(item.jumlah);
         }
 
+        // TAMPIL RIWAYAT
         isi.innerHTML += `
         <tr>
             <td>${formatTanggal(item.tanggal)}</td>
             <td>${item.nama}</td>
             <td>Rp ${rupiah(item.jumlah)}</td>
             <td>
-                <button class="btn-edit" onclick="editData(${item.id})">Edit</button>
-                <button class="btn-hapus" onclick="hapusData(${item.id})">Hapus</button>
+                <button class="btn-edit" onclick="editData(${item.id})">
+                Edit
+                </button>
+
+                <button class="btn-hapus" onclick="hapusData(${item.id})">
+                Hapus
+                </button>
             </td>
         </tr>
         `;
     }
 
-    document.getElementById("tampilSaldo").innerText = "Rp " + rupiah(totalMasuk);
-    document.getElementById("totalKeluar").innerText = "Rp " + rupiah(totalKeluar);
-    document.getElementById("sisaSaldo").innerText = "Rp " + rupiah(totalMasuk - totalKeluar);
-    document.getElementById("totalTabungan").innerText = "Rp " + rupiah(totalTabungan);
+    document.getElementById("tampilSaldo").innerText =
+    "Rp " + rupiah(totalMasuk);
+    document.getElementById("totalKeluar").innerText =
+    "Rp " + rupiah(totalKeluar);
+    document.getElementById("sisaSaldo").innerText =
+    "Rp " + rupiah(totalMasuk - totalKeluar);
+    document.getElementById("totalTabungan").innerText =
+    "Rp " + rupiah(totalTabungan);
 }
 ambilData();
 
