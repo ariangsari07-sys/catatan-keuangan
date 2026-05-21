@@ -130,42 +130,48 @@ function tambahData(){
 
 // RESET SALDO
 function simpanSaldo(){
+    let konfirmasi = confirm(
+        "Pindahkan sisa saldo ke tabungan?"
+    );
 
-    let konfirmasi = confirm("Pindahkan sisa saldo ke tabungan?");
     if(!konfirmasi) return;
 
     let totalMasuk = 0;
     let totalKeluar = 0;
 
+    // HITUNG SALDO AKTIF
     for(let i = 0; i < dataPengeluaran.length; i++){
-
         let item = dataPengeluaran[i];
-
-        // STOP SAAT RESET TERAKHIR
-        if(item.nama === "Reset Saldo"){
-            break;
-        }
 
         // TAMBAH SALDO
         if(item.nama === "Tambah Saldo"){
             totalMasuk += Number(item.jumlah);
         }
 
+        // MASUK TABUNGAN
+        else if(item.nama === "Masuk Tabungan"){
+            // RESET 
+            totalMasuk = 0;
+            totalKeluar = 0;
+            continue;
+        }
+
+        // AMBIL TABUNGAN
+        else if(item.nama === "Ambil Tabungan"){
+            totalMasuk += Number(item.jumlah);
+        }
+
         // PENGELUARAN
-        else if(
-            item.nama !== "Masuk Tabungan" &&
-            item.nama !== "Ambil Tabungan"
-        ){
+        else{
             totalKeluar += Number(item.jumlah);
         }
     }
 
     let sisa = totalMasuk - totalKeluar;
-
     let tanggal =
     new Date().toISOString().split("T")[0];
 
-    // MASUK TABUNGAN
+    // PINDAH KE TABUNGAN
     fetch("/tambah",{
         method:"POST",
         headers:{
@@ -178,39 +184,16 @@ function simpanSaldo(){
         })
     })
 
+    .then(res => res.text())
     .then(() => {
-
-        // RESET
-        return fetch("/tambah",{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                tanggal: tanggal,
-                nama: "Reset Saldo",
-                jumlah: 0
-            })
-        });
-
-    })
-
-    .then(() => {
-
-        alert("Saldo dipindahkan ke tabungan");
-
+        alert("Saldo dipindahkan");
         ambilData();
-
     })
 
     .catch(err => {
-
         console.log(err);
-
         alert("Gagal");
-
     });
-
 }
 
 // AMBIL DATA
@@ -225,22 +208,30 @@ function ambilData(){
 
 // TAMPIL DATA
 function tampilData(){
-    let isi = document.getElementById("isiData");
+    let isi =
+    document.getElementById("isiData");
     isi.innerHTML = "";
 
-    let isiTabungan = document.getElementById("isiTabungan");
+    let isiTabungan =
+    document.getElementById("isiTabungan");
     isiTabungan.innerHTML = "";
 
     let totalMasuk = 0;
     let totalKeluar = 0;
     let totalTabungan = 0;
+    let resetAktif = false;
 
     for(let i = 0; i < dataPengeluaran.length; i++){
         let item = dataPengeluaran[i];
 
-        // TABUNGAN
+        // MASUK TABUNGAN
         if(item.nama === "Masuk Tabungan"){
-            totalTabungan += Number(item.jumlah);
+            // RESET RINGKASAN 
+            resetAktif = true;
+            totalMasuk = 0;
+            totalKeluar = 0;
+            totalTabungan +=
+            Number(item.jumlah);
             isiTabungan.innerHTML += `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
@@ -248,12 +239,12 @@ function tampilData(){
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
             `;
-            continue;
         }
 
         // AMBIL TABUNGAN
-        if(item.nama === "Ambil Tabungan"){
-            totalTabungan -= Number(item.jumlah);
+        else if(item.nama === "Ambil Tabungan"){
+            totalTabungan -=
+            Number(item.jumlah);
             isiTabungan.innerHTML += `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
@@ -261,35 +252,25 @@ function tampilData(){
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
             `;
-            continue;
         }
 
-        // RESET SALDO
-if(item.nama === "Reset Saldo"){
+        // HITUNG RINGKASAN
+        if(!resetAktif){
 
-    totalMasuk = 0;
-    totalKeluar = 0;
+            // TAMBAH SALDO
+            if(item.nama === "Tambah Saldo"){
+                totalMasuk +=
+                Number(item.jumlah);
+            }
 
-    isi.innerHTML += `
-    <tr>
-        <td>${formatTanggal(item.tanggal)}</td>
-        <td>${item.nama}</td>
-        <td>Rp 0</td>
-        <td>-</td>
-    </tr>
-    `;
-
-    continue;
-}
-       
-        // TAMBAH SALDO
-        if(item.nama === "Tambah Saldo"){
-            totalMasuk += Number(item.jumlah);
-        }
-       
-        // PENGELUARAN
-        else{
-            totalKeluar += Number(item.jumlah);
+            // PENGELUARAN
+            else if(
+                item.nama !== "Masuk Tabungan" &&
+                item.nama !== "Ambil Tabungan"
+            ){
+                totalKeluar +=
+                Number(item.jumlah);
+            }
         }
 
         // TAMPIL RIWAYAT
@@ -299,28 +280,18 @@ if(item.nama === "Reset Saldo"){
             <td>${item.nama}</td>
             <td>Rp ${rupiah(item.jumlah)}</td>
             <td>
-                <button class="btn-edit" onclick="editData(${item.id})">
-                Edit
-                </button>
-
-                <button class="btn-hapus" onclick="hapusData(${item.id})">
-                Hapus
-                </button>
+                <button class="btn-edit" onclick="editData(${item.id})">Edit</button>
+                <button class="btn-hapus" onclick="hapusData(${item.id})">Hapus</button>
             </td>
         </tr>
         `;
     }
 
-    document.getElementById("tampilSaldo").innerText =
-    "Rp " + rupiah(totalMasuk);
-    document.getElementById("totalKeluar").innerText =
-    "Rp " + rupiah(totalKeluar);
-    document.getElementById("sisaSaldo").innerText =
-    "Rp " + rupiah(totalMasuk - totalKeluar);
-    document.getElementById("totalTabungan").innerText =
-    "Rp " + rupiah(totalTabungan);
+    document.getElementById("tampilSaldo").innerText ="Rp " + rupiah(totalMasuk);
+    document.getElementById("totalKeluar").innerText ="Rp " + rupiah(totalKeluar);
+    document.getElementById("sisaSaldo").innerText ="Rp " + rupiah(totalMasuk - totalKeluar);
+    document.getElementById("totalTabungan").innerText ="Rp " + rupiah(totalTabungan);
 }
-ambilData();
 
 // HAPUS DATA
 function hapusData(id){
