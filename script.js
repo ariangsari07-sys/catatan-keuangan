@@ -75,13 +75,20 @@ function tambahData(){
     let tanggal = document.getElementById("tanggal").value;
     let nama = document.getElementById("nama").value;
     let jumlah = document.getElementById("jumlah").value;
-
     if(tanggal == "" || nama == "" || jumlah == ""){
         alert("Isi semua data!");
         return;
     }
 
     let angkaJumlah = ambilAngka(jumlah);
+    let saldoSekarang = ambilAngka(document.getElementById("sisaSaldo").innerText);
+    if(
+        nama !== "Tambah Saldo" &&
+        angkaJumlah > saldoSekarang
+    ){
+        alert("Saldo tidak mencukupi!");
+        return;
+    }
 
     // MODE EDIT
     if(editId !== null){
@@ -334,45 +341,3 @@ function toggleRiwayatTabungan(){
     }
 }
 
-// AMBIL TABUNGAN
-function ambilTabungan(){
-    let input = document.getElementById("inputTabungan").value;
-    let ambil = ambilAngka(input);
-
-    // VALIDASI
-    if(ambil <= 0){
-        alert("Masukkan nominal!");
-        return;
-    }
-
-    // AMBIL TOTAL TABUNGAN
-    let totalTabungan = ambilAngka(document.getElementById("totalTabungan").innerText);
-
-    // CEK SALDO
-    if(ambil > totalTabungan){
-        alert("Saldo tabungan tidak cukup!");
-        return;
-    }
-
-    let tanggal = new Date().toISOString().split("T")[0];
-
-    // SIMPAN DATA
-    fetch("/tambah",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: JSON.stringify({
-            tanggal: tanggal,
-            nama: "Ambil Tabungan",
-            jumlah: ambil
-        })
-    })
-
-    .then(res => res.text())
-    .then(data => {
-        alert(data);
-        document.getElementById("inputTabungan").value = "";
-        ambilData();
-    });
-}
