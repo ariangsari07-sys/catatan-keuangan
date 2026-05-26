@@ -307,10 +307,8 @@ function tampilData(){
         // =====================
 
         else if(item.nama === "Pengurangan Saldo"){
-
-            totalMasuk -=
-            Number(item.jumlah);
-
+            totalMasuk = 0;
+            totalKeluar = 0;
         }
 
         // =====================
