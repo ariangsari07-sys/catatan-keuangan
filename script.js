@@ -215,18 +215,15 @@ function ambilData(){
 
 // TAMPIL DATA
 function tampilData(){
-    let isi =
-    document.getElementById("isiData");
+    let isi = document.getElementById("isiData");
     isi.innerHTML = "";
 
-    let isiTabungan =
-    document.getElementById("isiTabungan");
+    let isiTabungan = document.getElementById("isiTabungan");
     isiTabungan.innerHTML = "";
 
     let totalMasuk = 0;
     let totalKeluar = 0;
     let totalTabungan = 0;
-    let resetAktif = false;
 
     for(let i = 0; i < dataPengeluaran.length; i++){
         let item = dataPengeluaran[i];
@@ -234,7 +231,6 @@ function tampilData(){
         // MASUK TABUNGAN
         if(item.nama === "Masuk Tabungan"){
             // RESET RINGKASAN 
-            resetAktif = true;
             totalMasuk = 0;
             totalKeluar = 0;
             totalTabungan +=
@@ -261,23 +257,17 @@ function tampilData(){
             `;
         }
 
-        // HITUNG RINGKASAN
-        if(!resetAktif){
+        // TAMBAH SALDO
+        if(item.nama === "Tambah Saldo"){
+            totalMasuk += Number(item.jumlah);
+        }
 
-            // TAMBAH SALDO
-            if(item.nama === "Tambah Saldo"){
-                totalMasuk +=
-                Number(item.jumlah);
-            }
-
-            // PENGELUARAN
-            else if(
-                item.nama !== "Masuk Tabungan" &&
-                item.nama !== "Ambil Tabungan"
-            ){
-                totalKeluar +=
-                Number(item.jumlah);
-            }
+        // PENGELUARAN
+        else if(
+            item.nama !== "Masuk Tabungan" &&
+            item.nama !== "Ambil Tabungan"
+        ){
+            totalKeluar += Number(item.jumlah);
         }
 
         // TAMPIL RIWAYAT
