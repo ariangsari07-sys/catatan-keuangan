@@ -230,69 +230,91 @@ function tampilData(){
     let totalKeluar = 0;
     let totalTabungan = 0;
 
-    for(let i = 0; i < dataPengeluaran.length; i++){
+    let mulaiHitung = false;
+
+    // LOOP DARI BAWAH
+    for(
+        let i = dataPengeluaran.length - 1;
+        i >= 0;
+        i--
+    ){
 
         let item = dataPengeluaran[i];
 
         // =====================
-        // MASUK TABUNGAN
+        // TABUNGAN
         // =====================
+
         if(item.nama === "Masuk Tabungan"){
 
-            // MASUKKAN KE TABUNGAN
-            totalTabungan += Number(item.jumlah);
+            totalTabungan +=
+            Number(item.jumlah);
 
-            // RESET RINGKASAN
-            totalMasuk = 0;
-            totalKeluar = 0;
-
-            isiTabungan.innerHTML += `
+            isiTabungan.innerHTML =
+            `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
                 <td>Masuk</td>
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
-            `;
+            `
+            + isiTabungan.innerHTML;
+
+            // SETELAH RESET
+            mulaiHitung = true;
+
+            continue;
         }
 
-        // =====================
-        // AMBIL TABUNGAN
-        // =====================
         else if(item.nama === "Ambil Tabungan"){
 
-            // KURANGI TABUNGAN
-            totalTabungan -= Number(item.jumlah);
+            totalTabungan -=
+            Number(item.jumlah);
 
-            isiTabungan.innerHTML += `
+            isiTabungan.innerHTML =
+            `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
                 <td>Ambil</td>
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
-            `;
+            `
+            + isiTabungan.innerHTML;
         }
 
         // =====================
-        // TAMBAH SALDO
+        // HITUNG RINGKASAN
         // =====================
-        else if(item.nama === "Tambah Saldo"){
 
-            totalMasuk += Number(item.jumlah);
+        if(!mulaiHitung){
 
+            if(item.nama === "Tambah Saldo"){
+
+                totalMasuk +=
+                Number(item.jumlah);
+
+            }
+
+            else if(
+                item.nama !== "Masuk Tabungan" &&
+                item.nama !== "Ambil Tabungan"
+            ){
+
+                totalKeluar +=
+                Number(item.jumlah);
+
+            }
         }
+    }
 
-        // =====================
-        // PENGELUARAN
-        // =====================
-        else{
+    // =====================
+    // RIWAYAT NORMAL
+    // =====================
 
-            totalKeluar += Number(item.jumlah);
+    for(let i = 0; i < dataPengeluaran.length; i++){
 
-        }
+        let item = dataPengeluaran[i];
 
-        // =====================
-        // RIWAYAT
-        // =====================
         isi.innerHTML += `
         <tr>
             <td>${formatTanggal(item.tanggal)}</td>
@@ -316,7 +338,7 @@ function tampilData(){
     }
 
     // =====================
-    // TAMPILKAN RINGKASAN
+    // TAMPILKAN
     // =====================
 
     document.getElementById("tampilSaldo").innerText =
