@@ -136,7 +136,9 @@ function tambahData(){
 }
 
 // RESET SALDO
+// RESET SALDO
 function simpanSaldo(){
+
     let konfirmasi = confirm(
         "Pindahkan sisa saldo ke tabungan?"
     );
@@ -148,58 +150,113 @@ function simpanSaldo(){
 
     // HITUNG SALDO AKTIF
     for(let i = 0; i < dataPengeluaran.length; i++){
+
         let item = dataPengeluaran[i];
 
         // TAMBAH SALDO
         if(item.nama === "Tambah Saldo"){
+
             totalMasuk += Number(item.jumlah);
+
         }
 
-        // MASUK TABUNGAN
-        else if(item.nama === "Masuk Tabungan"){
-            // RESET 
-            totalMasuk = 0;
-            totalKeluar = 0;
-            continue;
+        // PENGURANGAN SALDO
+        else if(item.nama === "Pengurangan Saldo"){
+
+            totalMasuk -= Number(item.jumlah);
+
         }
 
         // AMBIL TABUNGAN
         else if(item.nama === "Ambil Tabungan"){
+
             totalMasuk += Number(item.jumlah);
+
         }
 
         // PENGELUARAN
-        else{
+        else if(
+            item.nama !== "Masuk Tabungan"
+        ){
+
             totalKeluar += Number(item.jumlah);
+
         }
     }
 
     let sisa = totalMasuk - totalKeluar;
+
+    // JIKA SALDO HABIS
+    if(sisa <= 0){
+
+        alert("Saldo tidak ada");
+
+        return;
+
+    }
+
     let tanggal =
     new Date().toISOString().split("T")[0];
 
-    // PINDAH KE TABUNGAN
+    // MASUK TABUNGAN
     fetch("/tambah",{
+
         method:"POST",
+
         headers:{
             "Content-Type":"application/json"
         },
+
         body: JSON.stringify({
+
             tanggal: tanggal,
             nama: "Masuk Tabungan",
             jumlah: sisa
+
         })
     })
 
     .then(res => res.text())
+
     .then(() => {
+
+        // KURANGI SALDO AKTIF
+        return fetch("/tambah",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body: JSON.stringify({
+
+                tanggal: tanggal,
+                nama: "Pengurangan Saldo",
+                jumlah: sisa
+
+            })
+
+        });
+
+    })
+
+    .then(res => res.text())
+
+    .then(() => {
+
         alert("Saldo dipindahkan");
+
         ambilData();
+
     })
 
     .catch(err => {
+
         console.log(err);
+
         alert("Gagal");
+
     });
 }
 
@@ -232,7 +289,10 @@ function tampilData(){
 
     let mulaiHitung = false;
 
+    // =====================
     // LOOP DARI BAWAH
+    // =====================
+
     for(
         let i = dataPengeluaran.length - 1;
         i >= 0;
@@ -242,7 +302,7 @@ function tampilData(){
         let item = dataPengeluaran[i];
 
         // =====================
-        // TABUNGAN
+        // MASUK TABUNGAN
         // =====================
 
         if(item.nama === "Masuk Tabungan"){
@@ -260,11 +320,14 @@ function tampilData(){
             `
             + isiTabungan.innerHTML;
 
-            // SETELAH RESET
             mulaiHitung = true;
 
             continue;
         }
+
+        // =====================
+        // AMBIL TABUNGAN
+        // =====================
 
         else if(item.nama === "Ambil Tabungan"){
 
@@ -284,10 +347,10 @@ function tampilData(){
 
         // =====================
         // HITUNG RINGKASAN
-        // =====================
 
         if(!mulaiHitung){
 
+            // TAMBAH SALDO
             if(item.nama === "Tambah Saldo"){
 
                 totalMasuk +=
@@ -295,6 +358,17 @@ function tampilData(){
 
             }
 
+            // RESET SALDO
+            else if(
+                item.nama === "Pengurangan Saldo"
+            ){
+
+                totalMasuk -=
+                Number(item.jumlah);
+
+            }
+
+            // PENGELUARAN
             else if(
                 item.nama !== "Masuk Tabungan" &&
                 item.nama !== "Ambil Tabungan"
@@ -307,10 +381,7 @@ function tampilData(){
         }
     }
 
-    // =====================
-    // RIWAYAT NORMAL
-    // =====================
-
+    // TAMPIL RIWAYAT
     for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
