@@ -215,10 +215,15 @@ function ambilData(){
 
 // TAMPIL DATA
 function tampilData(){
-    let isi = document.getElementById("isiData");
+
+    let isi =
+    document.getElementById("isiData");
+
     isi.innerHTML = "";
 
-    let isiTabungan = document.getElementById("isiTabungan");
+    let isiTabungan =
+    document.getElementById("isiTabungan");
+
     isiTabungan.innerHTML = "";
 
     let totalMasuk = 0;
@@ -226,15 +231,26 @@ function tampilData(){
     let totalTabungan = 0;
 
     for(let i = 0; i < dataPengeluaran.length; i++){
+
         let item = dataPengeluaran[i];
 
+        // TAMBAH SALDO
+        if(item.nama === "Tambah Saldo"){
+
+            totalMasuk += Number(item.jumlah);
+
+        }
+
         // MASUK TABUNGAN
-        if(item.nama === "Masuk Tabungan"){
-            // RESET RINGKASAN 
+        else if(item.nama === "Masuk Tabungan"){
+
+            // PINDAH KE TABUNGAN
+            totalTabungan += Number(item.jumlah);
+
+            // RESET RINGKASAN
             totalMasuk = 0;
             totalKeluar = 0;
-            totalTabungan +=
-            Number(item.jumlah);
+
             isiTabungan.innerHTML += `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
@@ -242,12 +258,14 @@ function tampilData(){
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
             `;
+
         }
 
         // AMBIL TABUNGAN
         else if(item.nama === "Ambil Tabungan"){
-            totalTabungan -=
-            Number(item.jumlah);
+
+            totalTabungan -= Number(item.jumlah);
+
             isiTabungan.innerHTML += `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
@@ -255,19 +273,14 @@ function tampilData(){
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
             `;
-        }
 
-        // TAMBAH SALDO
-        if(item.nama === "Tambah Saldo"){
-            totalMasuk += Number(item.jumlah);
         }
 
         // PENGELUARAN
-        else if(
-            item.nama !== "Masuk Tabungan" &&
-            item.nama !== "Ambil Tabungan"
-        ){
+        else{
+
             totalKeluar += Number(item.jumlah);
+
         }
 
         // TAMPIL RIWAYAT
@@ -277,17 +290,33 @@ function tampilData(){
             <td>${item.nama}</td>
             <td>Rp ${rupiah(item.jumlah)}</td>
             <td>
-                <button class="btn-edit" onclick="editData(${item.id})">Edit</button>
-                <button class="btn-hapus" onclick="hapusData(${item.id})">Hapus</button>
+
+                <button class="btn-edit"
+                onclick="editData(${item.id})">
+                Edit
+                </button>
+
+                <button class="btn-hapus"
+                onclick="hapusData(${item.id})">
+                Hapus
+                </button>
+
             </td>
         </tr>
         `;
     }
 
-    document.getElementById("tampilSaldo").innerText ="Rp " + rupiah(totalMasuk);
-    document.getElementById("totalKeluar").innerText ="Rp " + rupiah(totalKeluar);
-    document.getElementById("sisaSaldo").innerText ="Rp " + rupiah(totalMasuk - totalKeluar);
-    document.getElementById("totalTabungan").innerText ="Rp " + rupiah(totalTabungan);
+    document.getElementById("tampilSaldo").innerText =
+    "Rp " + rupiah(totalMasuk);
+
+    document.getElementById("totalKeluar").innerText =
+    "Rp " + rupiah(totalKeluar);
+
+    document.getElementById("sisaSaldo").innerText =
+    "Rp " + rupiah(totalMasuk - totalKeluar);
+
+    document.getElementById("totalTabungan").innerText =
+    "Rp " + rupiah(totalTabungan);
 }
 
 // HAPUS DATA
