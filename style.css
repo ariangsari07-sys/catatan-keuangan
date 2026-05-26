@@ -158,7 +158,27 @@ tr:hover{
 
 .ringkasan-card{
     width: 40%;
-    height: 125px;
+    min-height: 170px;
+    position: relative;
+}
+
+.btn-set-saldo{
+    width:auto;
+    padding:8px 14px;
+    font-size:13px;
+
+    position:absolute;
+    bottom:15px;
+    left:15px;
+
+}.btn-set-saldo{
+    width:auto;
+    padding:10px 18px;
+    font-size:14px;
+    font-weight:bold;
+    position:absolute;
+    bottom:15px;
+    left:15px;
 }
 
 .tabungan-card{
@@ -181,5 +201,20 @@ tr:hover{
         flex-direction:column;
     }
 
+}
+
+.saldo-input-group{
+    display:flex;
+    gap:10px;
+}
+
+.saldo-input-group input{
+    flex:1;
+    margin-bottom:0;
+}
+
+.saldo-input-group button{
+    width:auto;
+    padding:12px 18px;
 }
 

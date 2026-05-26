@@ -17,10 +17,19 @@
     <!-- Kelola Saldo -->
     <div class="card">
         <h3>💰 Kelola Saldo</h3>
-        <input type="text" id="saldoAwal" placeholder="Masukkan nominal" oninput="formatAngka(this)">
-        <div class="btn-group">
-            <button onclick="tambahSaldo()">Tambah Saldo</button>
-        </div>
+       <div class="saldo-input-group">
+
+    <input
+    type="text"
+    id="saldoAwal"
+    placeholder="Masukkan nominal"
+    oninput="formatAngka(this)">
+
+    <button onclick="tambahSaldo()">
+        Tambah
+    </button>
+
+</div>
     </div>
 
     <!-- Tambah Pengeluaran -->
@@ -51,7 +60,11 @@
             <p>Sisa Saldo:
                 <span id="sisaSaldo">Rp 0</span>
             </p>
-            <button onclick="simpanSaldo()">Set Saldo</button>
+            <button
+class="btn-set-saldo"
+onclick="simpanSaldo()">
+    Set Saldo
+</button>
         </div>
 
         <!-- TABUNGAN -->
