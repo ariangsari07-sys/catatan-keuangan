@@ -136,7 +136,6 @@ function tambahData(){
 }
 
 // RESET SALDO
-// RESET SALDO
 function simpanSaldo(){
 
     let konfirmasi = confirm(
@@ -287,28 +286,33 @@ function tampilData(){
     let totalKeluar = 0;
     let totalTabungan = 0;
 
+    // =====================
+    // LOOP DATA
+    // =====================
+
     for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
 
         // =====================
+        // RESET RINGKASAN
+        // =====================
+
+        if(item.nama === "Pengurangan Saldo"){
+
+            totalMasuk = 0;
+            totalKeluar = 0;
+        }
+
+        // =====================
         // TAMBAH SALDO
         // =====================
 
-        if(item.nama === "Tambah Saldo"){
+        else if(item.nama === "Tambah Saldo"){
 
             totalMasuk +=
             Number(item.jumlah);
 
-        }
-
-        // =====================
-        // PENGURANGAN SALDO
-        // =====================
-
-        else if(item.nama === "Pengurangan Saldo"){
-            totalMasuk = 0;
-            totalKeluar = 0;
         }
 
         // =====================
@@ -338,6 +342,9 @@ function tampilData(){
             totalTabungan -=
             Number(item.jumlah);
 
+            totalMasuk +=
+            Number(item.jumlah);
+
             isiTabungan.innerHTML += `
             <tr>
                 <td>${formatTanggal(item.tanggal)}</td>
@@ -359,7 +366,7 @@ function tampilData(){
         }
 
         // =====================
-        // RIWAYAT
+        // TAMPIL RIWAYAT
         // =====================
 
         isi.innerHTML += `
