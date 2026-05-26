@@ -234,17 +234,12 @@ function tampilData(){
 
         let item = dataPengeluaran[i];
 
-        // TAMBAH SALDO
-        if(item.nama === "Tambah Saldo"){
-
-            totalMasuk += Number(item.jumlah);
-
-        }
-
+        // =====================
         // MASUK TABUNGAN
-        else if(item.nama === "Masuk Tabungan"){
+        // =====================
+        if(item.nama === "Masuk Tabungan"){
 
-            // PINDAH KE TABUNGAN
+            // MASUKKAN KE TABUNGAN
             totalTabungan += Number(item.jumlah);
 
             // RESET RINGKASAN
@@ -258,12 +253,14 @@ function tampilData(){
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
             `;
-
         }
 
+        // =====================
         // AMBIL TABUNGAN
+        // =====================
         else if(item.nama === "Ambil Tabungan"){
 
+            // KURANGI TABUNGAN
             totalTabungan -= Number(item.jumlah);
 
             isiTabungan.innerHTML += `
@@ -273,17 +270,29 @@ function tampilData(){
                 <td>Rp ${rupiah(item.jumlah)}</td>
             </tr>
             `;
+        }
+
+        // =====================
+        // TAMBAH SALDO
+        // =====================
+        else if(item.nama === "Tambah Saldo"){
+
+            totalMasuk += Number(item.jumlah);
 
         }
 
+        // =====================
         // PENGELUARAN
+        // =====================
         else{
 
             totalKeluar += Number(item.jumlah);
 
         }
 
-        // TAMPIL RIWAYAT
+        // =====================
+        // RIWAYAT
+        // =====================
         isi.innerHTML += `
         <tr>
             <td>${formatTanggal(item.tanggal)}</td>
@@ -305,6 +314,10 @@ function tampilData(){
         </tr>
         `;
     }
+
+    // =====================
+    // TAMPILKAN RINGKASAN
+    // =====================
 
     document.getElementById("tampilSaldo").innerText =
     "Rp " + rupiah(totalMasuk);
