@@ -174,13 +174,22 @@ function simpanSaldo(){
 
     .then(res => res.text())
 
-.then(() => {
+    .then(() => {
 
-    alert("Saldo dipindahkan");
+        // PENANDA RESET
+        return fetch("/tambah",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                tanggal: tanggal,
+                nama: "Reset Ringkasan",
+                jumlah: 0
+            })
+        });
 
-    ambilData();
-
-})
+    })
 
     .then(res => res.text())
 
@@ -198,7 +207,6 @@ function simpanSaldo(){
 
     });
 }
-
 // AMBIL DATA
 function ambilData(){
     fetch("/data")
@@ -264,20 +272,6 @@ function tampilData(){
 // HITUNG RINGKASAN
 // =====================
 
-let indexReset = -1;
-
-// cari Masuk Tabungan terakhir
-for(let i = dataPengeluaran.length - 1; i >= 0; i--){
-
-    if(dataPengeluaran[i].nama === "Masuk Tabungan"){
-
-        indexReset = i;
-        break;
-
-    }
-}
-
-// hitung setelah reset terakhir
 for(let i = indexReset + 1; i < dataPengeluaran.length; i++){
 
     let item = dataPengeluaran[i];
@@ -294,13 +288,15 @@ for(let i = indexReset + 1; i < dataPengeluaran.length; i++){
 
     }
 
-    else if(item.nama !== "Masuk Tabungan"){
+    else if(
+        item.nama !== "Masuk Tabungan" &&
+        item.nama !== "Reset Ringkasan"
+    ){
 
         totalKeluar += Number(item.jumlah);
 
     }
 }
-
         // =====================
         // RIWAYAT
         // =====================
