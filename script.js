@@ -248,14 +248,13 @@ function tampilData(){
 
     // =====================
     // CARI RESET TERAKHIR
-    // (Masuk Tabungan terakhir)
     // =====================
 
     let indexReset = -1;
 
     for(let i = dataPengeluaran.length - 1; i >= 0; i--){
 
-        if(dataPengeluaran[i].nama === "Masuk Tabungan"){
+        if(dataPengeluaran[i].nama === "Reset Ringkasan"){
 
             indexReset = i;
             break;
@@ -280,7 +279,10 @@ function tampilData(){
             totalMasuk += Number(item.jumlah);
         }
 
-        else if(item.nama !== "Masuk Tabungan"){
+        else if(
+            item.nama !== "Masuk Tabungan" &&
+            item.nama !== "Reset Ringkasan"
+        ){
 
             totalKeluar += Number(item.jumlah);
         }
@@ -293,6 +295,11 @@ function tampilData(){
     for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
+
+        // SEMBUNYIKAN RESET RINGKASAN
+        if(item.nama === "Reset Ringkasan"){
+            continue;
+        }
 
         isi.innerHTML += `
         <tr>
