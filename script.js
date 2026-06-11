@@ -159,7 +159,6 @@ function simpanSaldo(){
     let tanggal =
     new Date().toISOString().split("T")[0];
 
-    // MASUK TABUNGAN
     fetch("/tambah",{
         method:"POST",
         headers:{
@@ -174,11 +173,10 @@ function simpanSaldo(){
 
     .then(res => res.text())
 
-    .then(res => res.text())
-
-    .then(() => {
+    .then(data => {
 
         alert("Saldo dipindahkan ke tabungan");
+
         ambilData();
 
     })
@@ -190,7 +188,6 @@ function simpanSaldo(){
 
     });
 }
-
 // AMBIL DATA
 function ambilData(){
     fetch("/data")
@@ -214,8 +211,6 @@ function tampilData(){
     let totalKeluar = 0;
     let totalTabungan = 0;
 
-    dataPengeluaran.reverse();
-
     // =====================
     // HITUNG TABUNGAN
     // =====================
@@ -223,9 +218,6 @@ function tampilData(){
     for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
-        if(item.nama === "Reset Ringkasan"){
-    continue;
-}
 
         if(item.nama === "Masuk Tabungan"){
 
@@ -256,17 +248,17 @@ function tampilData(){
 
     // =====================
     // CARI RESET TERAKHIR
+    // (Masuk Tabungan terakhir)
     // =====================
 
     let indexReset = -1;
 
     for(let i = dataPengeluaran.length - 1; i >= 0; i--){
 
-        if(dataPengeluaran[i].nama === "Reset Ringkasan"){
+        if(dataPengeluaran[i].nama === "Masuk Tabungan"){
 
             indexReset = i;
             break;
-
         }
     }
 
@@ -281,22 +273,16 @@ function tampilData(){
         if(item.nama === "Tambah Saldo"){
 
             totalMasuk += Number(item.jumlah);
-
         }
 
         else if(item.nama === "Ambil Tabungan"){
 
             totalMasuk += Number(item.jumlah);
-
         }
 
-        else if(
-            item.nama !== "Masuk Tabungan" &&
-            item.nama !== "Reset Ringkasan"
-        ){
+        else if(item.nama !== "Masuk Tabungan"){
 
             totalKeluar += Number(item.jumlah);
-
         }
     }
 
