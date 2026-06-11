@@ -159,6 +159,7 @@ function simpanSaldo(){
     let tanggal =
     new Date().toISOString().split("T")[0];
 
+    // MASUK TABUNGAN
     fetch("/tambah",{
         method:"POST",
         headers:{
@@ -173,10 +174,28 @@ function simpanSaldo(){
 
     .then(res => res.text())
 
-    .then(data => {
+    .then(() => {
+
+        // PENANDA RESET
+        return fetch("/tambah",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                tanggal: tanggal,
+                nama: "Reset Ringkasan",
+                jumlah: 0
+            })
+        });
+
+    })
+
+    .then(res => res.text())
+
+    .then(() => {
 
         alert("Saldo dipindahkan ke tabungan");
-
         ambilData();
 
     })
@@ -188,6 +207,7 @@ function simpanSaldo(){
 
     });
 }
+
 // AMBIL DATA
 function ambilData(){
     fetch("/data")
