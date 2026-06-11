@@ -230,6 +230,8 @@ function tampilData(){
     let totalMasuk = 0;
     let totalKeluar = 0;
     let totalTabungan = 0;
+    
+    dataPengeluaran.reverse();
 
     // =====================
     // HITUNG TABUNGAN
