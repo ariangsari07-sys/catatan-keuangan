@@ -159,7 +159,7 @@ function simpanSaldo(){
     let tanggal =
     new Date().toISOString().split("T")[0];
 
-    // MASUK TABUNGAN
+    // SIMPAN KE TABUNGAN
     fetch("/tambah",{
         method:"POST",
         headers:{
@@ -176,7 +176,7 @@ function simpanSaldo(){
 
     .then(() => {
 
-        // PENANDA RESET
+        // PENANDA RESET RINGKASAN
         return fetch("/tambah",{
             method:"POST",
             headers:{
@@ -196,6 +196,7 @@ function simpanSaldo(){
     .then(() => {
 
         alert("Saldo dipindahkan ke tabungan");
+
         ambilData();
 
     })
@@ -203,7 +204,8 @@ function simpanSaldo(){
     .catch(err => {
 
         console.log(err);
-        alert("Gagal");
+
+        alert("Gagal memindahkan saldo");
 
     });
 }
@@ -267,36 +269,46 @@ function tampilData(){
     }
 
     // =====================
-    // CARI RESET TERAKHIR
+    // CARI RESET TERBARU
     // =====================
 
-    let indexReset = -1;
+    let indexReset = dataPengeluaran.findIndex(
+        item => item.nama === "Reset Ringkasan"
+    );
 
-    for(let i = dataPengeluaran.length - 1; i >= 0; i--){
+    let dataRingkasan;
 
-        if(dataPengeluaran[i].nama === "Reset Ringkasan"){
+    if(indexReset === -1){
 
-            indexReset = i;
-            break;
-        }
+        dataRingkasan = dataPengeluaran;
+
+    }else{
+
+        // hanya data setelah reset terakhir
+        dataRingkasan = dataPengeluaran.slice(
+            0,
+            indexReset
+        );
     }
 
     // =====================
     // HITUNG RINGKASAN
     // =====================
 
-    for(let i = indexReset + 1; i < dataPengeluaran.length; i++){
+    for(let i = 0; i < dataRingkasan.length; i++){
 
-        let item = dataPengeluaran[i];
+        let item = dataRingkasan[i];
 
         if(item.nama === "Tambah Saldo"){
 
             totalMasuk += Number(item.jumlah);
+
         }
 
         else if(item.nama === "Ambil Tabungan"){
 
             totalMasuk += Number(item.jumlah);
+
         }
 
         else if(
@@ -305,6 +317,7 @@ function tampilData(){
         ){
 
             totalKeluar += Number(item.jumlah);
+
         }
     }
 
@@ -316,7 +329,6 @@ function tampilData(){
 
         let item = dataPengeluaran[i];
 
-        // SEMBUNYIKAN RESET RINGKASAN
         if(item.nama === "Reset Ringkasan"){
             continue;
         }
