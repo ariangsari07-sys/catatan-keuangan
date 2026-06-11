@@ -306,7 +306,7 @@ function tampilData(){
 
         else if(
             item.nama !== "Masuk Tabungan" &&
-            item.nama !== "Reset Ringkasan"
+           
         ){
 
             totalKeluar += Number(item.jumlah);
