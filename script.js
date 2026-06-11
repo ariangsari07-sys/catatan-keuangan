@@ -218,29 +218,26 @@ function ambilData(){
 }
 
 // TAMPIL DATA
+// TAMPIL DATA
 function tampilData(){
 
-    let isi =
-    document.getElementById("isiData");
-
+    let isi = document.getElementById("isiData");
     isi.innerHTML = "";
 
-    let isiTabungan =
-    document.getElementById("isiTabungan");
-
+    let isiTabungan = document.getElementById("isiTabungan");
     isiTabungan.innerHTML = "";
 
     let totalMasuk = 0;
     let totalKeluar = 0;
     let totalTabungan = 0;
 
+    // =====================
+    // HITUNG TABUNGAN
+    // =====================
+
     for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
-
-        // =====================
-        // TABUNGAN
-        // =====================
 
         if(item.nama === "Masuk Tabungan"){
 
@@ -267,41 +264,57 @@ function tampilData(){
             </tr>
             `;
         }
-
-       // =====================
-// HITUNG RINGKASAN
-// =====================
-
-for(let i = indexReset + 1; i < dataPengeluaran.length; i++){
-
-    let item = dataPengeluaran[i];
-
-    if(item.nama === "Tambah Saldo"){
-
-        totalMasuk += Number(item.jumlah);
-
     }
 
-    else if(item.nama === "Ambil Tabungan"){
+    // =====================
+    // CARI RESET TERAKHIR
+    // =====================
 
-        totalMasuk += Number(item.jumlah);
+    let indexReset = -1;
 
+    for(let i = dataPengeluaran.length - 1; i >= 0; i--){
+
+        if(dataPengeluaran[i].nama === "Reset Ringkasan"){
+
+            indexReset = i;
+            break;
+
+        }
     }
 
-    else if(
-        item.nama !== "Masuk Tabungan" &&
-        item.nama !== "Reset Ringkasan"
-    ){
+    // =====================
+    // HITUNG RINGKASAN
+    // =====================
 
-        totalKeluar += Number(item.jumlah);
+    for(let i = indexReset + 1; i < dataPengeluaran.length; i++){
 
+        let item = dataPengeluaran[i];
+
+        if(item.nama === "Tambah Saldo"){
+
+            totalMasuk += Number(item.jumlah);
+
+        }
+
+        else if(item.nama === "Ambil Tabungan"){
+
+            totalMasuk += Number(item.jumlah);
+
+        }
+
+        else if(
+            item.nama !== "Masuk Tabungan" &&
+            item.nama !== "Reset Ringkasan"
+        ){
+
+            totalKeluar += Number(item.jumlah);
+
+        }
     }
-}
-        // =====================
-        // RIWAYAT
-        // =====================
 
-    }
+    // =====================
+    // RIWAYAT
+    // =====================
 
     for(let i = 0; i < dataPengeluaran.length; i++){
 
@@ -328,6 +341,10 @@ for(let i = indexReset + 1; i < dataPengeluaran.length; i++){
         </tr>
         `;
     }
+
+    // =====================
+    // TAMPILKAN
+    // =====================
 
     document.getElementById("tampilSaldo").innerText =
     "Rp " + rupiah(totalMasuk);
