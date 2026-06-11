@@ -174,23 +174,6 @@ function simpanSaldo(){
 
     .then(res => res.text())
 
-    .then(() => {
-
-        // PENANDA RESET
-        return fetch("/tambah",{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                tanggal: tanggal,
-                nama: "Reset Ringkasan",
-                jumlah: 0
-            })
-        });
-
-    })
-
     .then(res => res.text())
 
     .then(() => {
@@ -207,6 +190,7 @@ function simpanSaldo(){
 
     });
 }
+
 // AMBIL DATA
 function ambilData(){
     fetch("/data")
@@ -217,7 +201,6 @@ function ambilData(){
     });
 }
 
-// TAMPIL DATA
 // TAMPIL DATA
 function tampilData(){
 
