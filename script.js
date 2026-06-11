@@ -240,6 +240,9 @@ function tampilData(){
     for(let i = 0; i < dataPengeluaran.length; i++){
 
         let item = dataPengeluaran[i];
+        if(item.nama === "Reset Ringkasan"){
+    continue;
+}
 
         if(item.nama === "Masuk Tabungan"){
 
