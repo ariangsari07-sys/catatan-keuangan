@@ -230,7 +230,7 @@ function tampilData(){
     let totalMasuk = 0;
     let totalKeluar = 0;
     let totalTabungan = 0;
-    
+
     dataPengeluaran.reverse();
 
     // =====================
@@ -404,27 +404,37 @@ function toggleRiwayatTabungan(){
 
 // AMBIL TABUNGAN
 function ambilTabungan(){
-    let input = document.getElementById("inputTabungan").value;
+
+    let input =
+    document.getElementById("inputTabungan").value;
+
     let ambil = ambilAngka(input);
 
     // VALIDASI
     if(ambil <= 0){
+
         alert("Masukkan nominal!");
         return;
+
     }
 
-    // AMBIL TOTAL TABUNGAN
-    let totalTabungan = ambilAngka(document.getElementById("totalTabungan").innerText);
+    // CEK TABUNGAN
+    let totalTabungan =
+    ambilAngka(
+        document.getElementById("totalTabungan").innerText
+    );
 
-    // CEK SALDO TABUNGAN
     if(ambil > totalTabungan){
+
         alert("Saldo tabungan tidak cukup!");
         return;
+
     }
 
-    let tanggal = new Date().toISOString().split("T")[0];
+    let tanggal =
+    new Date().toISOString().split("T")[0];
 
-    // SIMPAN RIWAYAT AMBIL TABUNGAN
+    // SIMPAN RIWAYAT
     fetch("/tambah",{
         method:"POST",
         headers:{
@@ -436,27 +446,25 @@ function ambilTabungan(){
             jumlah: ambil
         })
     })
+
     .then(res => res.text())
+
     .then(() => {
 
-        // MASUKKAN KE SALDO AKTIF
-        return fetch("/tambah",{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                tanggal: tanggal,
-                nama: "Tambah Saldo",
-                jumlah: ambil
-            })
-        });
+        alert("Uang berhasil diambil dari tabungan");
+
+        document.getElementById("inputTabungan").value = "";
+
+        ambilData();
+
     })
 
-    .then(res => res.text())
-    .then(() => {
-        alert("Uang berhasil diambil dari tabungan");
-        document.getElementById("inputTabungan").value = "";
-        ambilData();
+    .catch(err => {
+
+        console.log(err);
+
+        alert("Gagal");
+
     });
+
 }
